@@ -31,6 +31,7 @@ Route::put('/cart/increase/{rowId}',[CartController::class,'increase_cart_quanti
 Route::put('/cart/decrease/{rowId}',[CartController::class,'decrease_cart_quantity'])->name('cart.decrease');
 Route::delete('/cart/remove/{rowId}',[CartController::class,'remove_cart_item'])->name('cart.item.remove');
 Route::delete('/cart/clear',[CartController::class,'clear_cart'])->name('cart.clear');
+Route::post('/cart/coupon/apply',[CartController::class,'apply_coupon_code'])->name('cart.coupon.apply');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

@@ -177,7 +177,7 @@ class AdminController extends Controller
         $coupon->expiry_date = $request->expiry_date;
         $coupon->save();
         Swal::fire([
-            'title' => 'Surfside Media',
+            'title' => 'CodeNest Agency',
             'text' => 'Coupons Added Successfully!',
             'icon' => 'success',
             'confirmButtonText' => 'ok'
@@ -212,7 +212,7 @@ class AdminController extends Controller
         $coupon->expiry_date = $request->expiry_date;
         $coupon->save();
         Swal::fire([
-            'title' => 'Surfside Media',
+            'title' => 'CodeNest Agency',
             'text' => 'Coupons Updated Successfully!',
             'icon' => 'success',
             'confirmButtonText' => 'ok'

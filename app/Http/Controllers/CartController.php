@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
+use App\Models\Coupons;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use SweetAlert2\Laravel\Swal;
+use Illuminate\Support\Facades\Session;
 use Surfsidemedia\Shoppingcart\Facades\Cart;
 
 class CartController extends Controller
@@ -83,8 +87,96 @@ class CartController extends Controller
     }
 
     // CLEAR ALL CART ITEMS
-    public function clear_cart(){
-         Cart::instance('cart')->destroy();
+    public function clear_cart()
+    {
+        Cart::instance('cart')->destroy();
         return redirect()->back()->with('success', 'Product removed from cart!');
     }
+
+
+    // APPLY COUPON CODE
+    public function apply_coupon_code(Request $request)
+    {
+        $coupon_code = $request->coupon_code;
+
+        if (!$coupon_code) {
+            Swal::fire([
+                'title' => 'CodeNest Agency',
+                'text' => 'Please enter a valid coupon code.',
+                'icon' => 'error',
+                'confirmButtonText' => 'ok'
+            ]);
+            return redirect()->back();
+        }
+
+        $subtotal = (float) str_replace(',', '', Cart::instance('cart')->subtotal());
+
+        $coupon = Coupons::where('code', $coupon_code)
+            ->where('expiry_date', '>=', Carbon::today())
+            ->where('cart_value', '<=', $subtotal)
+            ->first();
+
+        if (!$coupon) {
+            Swal::fire([
+                'title' => 'CodeNest Agency',
+                'text' => 'Invalid or expired coupon code!',
+                'icon' => 'error',
+                'confirmButtonText' => 'ok'
+            ]);
+            return redirect()->back();
+        }
+
+
+        Session::put('coupon', [
+            'code' => $coupon->code,
+            'type' => $coupon->type,
+            'value' => $coupon->value,
+            'cart_value' => $coupon->cart_value,
+        ]);
+        $this->calculatedMethod();
+        Swal::fire([
+            'title' => 'CodeNest Agency',
+            'text' => 'Coupon applied successfully!',
+            'icon' => 'success',
+            'confirmButtonText' => 'ok'
+        ]);
+
+        return redirect()->back();
+    }
+
+    // CALCULATED METHOD FOR COUPONS
+  public function calculatedMethod()
+{
+    $discount = 0;
+
+    if (Session::has('coupon')) {
+
+        
+        $subtotal = (float) str_replace(',', '', Cart::instance('cart')->subtotal());
+        $coupon = Session::get('coupon');
+
+      
+        if ($coupon['type'] == 'fixed') {
+            $discount = (float) $coupon['value'];
+        } else {
+            $discount = ($subtotal * (float) $coupon['value']) / 100;
+        }
+
+       
+        $subTotalAfterDiscount = $subtotal - $discount;
+        $taxRate = (float) config('cart.tax');
+        $taxAfterDiscount = ($subTotalAfterDiscount * $taxRate) / 100;
+        $totalAfterDiscount = $subTotalAfterDiscount + $taxAfterDiscount;
+
+       
+        Session::put('discounts',[
+            'discount' => number_format($discount, 2, '.', ''),
+            'subtotal' => number_format($subTotalAfterDiscount, 2, '.', ''),
+            'tax' => number_format($taxAfterDiscount, 2, '.', ''),
+            'total' => number_format($totalAfterDiscount, 2, '.', ''),
+        ]);
+    }
+}
+
+
 }
