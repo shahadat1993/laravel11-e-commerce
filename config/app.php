@@ -123,4 +123,11 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'aliases' => [
+        // অন্যান্য alias এখানে থাকবে...
+
+        'Cart' => Surfsidemedia\Shoppingcart\Facades\Cart::class,
+    ],
+
+
 ];

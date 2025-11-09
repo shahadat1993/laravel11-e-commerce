@@ -153,9 +153,9 @@
                                     </a>
                                 </li>
                                 <li class="menu-item">
-                                    <a href="coupons.html" class="">
+                                    <a href="{{ route('admin.coupon') }}" class="">
                                         <div class="icon"><i class="icon-grid"></i></div>
-                                        <div class="text">Coupns</div>
+                                        <div class="text">Coupons</div>
                                     </a>
                                 </li>
 
@@ -416,7 +416,7 @@
                                                     <img src="images/avatar/user-1.png" alt="">
                                                 </span>
                                                 <span class="flex flex-column">
-                                                    <span class="body-title mb-2">{{ Auth::user()->name }}</span>
+                                                    <span class="body-title mb-2">{{  \Illuminate\Support\Facades\Auth::user()->name }}</span>
                                                     <span class="text-tiny">Admin</span>
                                                 </span>
                                             </span>
@@ -485,7 +485,7 @@
             </div>
         </div>
     </div>
-
+     @include('sweetalert2::index')
     <script src="{{ asset('js/jquery.min.js') }}"></script>
     <script src="{{ asset('js/bootstrap.min.js') }}"></script>
     <script src="{{ asset('js/bootstrap-select.min.js') }}"></script>

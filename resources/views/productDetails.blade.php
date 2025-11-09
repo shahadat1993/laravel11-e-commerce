@@ -1,5 +1,10 @@
 @extends('layouts.app')
 @section('content')
+<style>
+    .filled-heart{
+        color:orange;
+    }
+</style>
 <main class="pt-90">
     <div class="mb-md-1 pb-md-3"></div>
     <section class="product-single container">
@@ -34,7 +39,7 @@
                   </div>
                             @endforeach
                         @endif
-                  
+
                 </div>
                 <div class="swiper-button-prev"><svg width="7" height="11" viewBox="0 0 7 11"
                     xmlns="http://www.w3.org/2000/svg">
@@ -57,7 +62,7 @@
                       src="{{ asset('uploads/products/'.$img) }}" width="104" height="104" alt="" /></div>
                       @endforeach
                         @endif
-                  
+
                 </div>
               </div>
             </div>
@@ -116,22 +121,48 @@
           <div class="product-single__short-desc">
             <p>{{$product->short_description}}</p>
           </div>
-          <form name="addtocart-form" method="post">
+          @if (Cart::instance('cart')->content()->where('id',$product->id)->count()>0)
+              <a href="{{ route('cart') }}" class="btn btn-warning mb-3">Go to cart</a>
+          @else
+
+          <form name="addtocart-form" method="post" action="{{ route('cart.add') }}">
+            @csrf
             <div class="product-single__addtocart">
               <div class="qty-control position-relative">
                 <input type="number" name="quantity" value="1" min="1" class="qty-control__number text-center">
                 <div class="qty-control__reduce">-</div>
                 <div class="qty-control__increase">+</div>
-              </div><!-- .qty-control -->
-              <button type="submit" class="btn btn-primary btn-addtocart js-open-aside" data-aside="cartDrawer">Add to
+            </div><!-- .qty-control -->
+            <input type="hidden" name="product_id" value="{{ $product->id }}">
+              <button type="submit" class="btn btn-primary btn-addtocart" data-aside="cartDrawer">Add to
                 Cart</button>
             </div>
           </form>
+            @endif
           <div class="product-single__addtolinks">
-            <a href="#" class="menu-link menu-link_us-s add-to-wishlist"><svg width="16" height="16" viewBox="0 0 20 20"
+            
+            @if (Cart::instance('wishlist')->content()->where('id', $product->id)->count() > 0)
+            <form action="{{ route('wishlist.item.remove',Cart::instance('wishlist')->content()->where('id', $product->id)->first()->rowId) }}" method="POST" id="wishlist_item_remove">
+                @csrf
+                @method('DELETE')
+            <a href="javascript:void(0)" onclick="document.getElementById('wishlist_item_remove').submit()" class="menu-link menu-link_us-s add-to-wishlist filled-heart"><svg width="16" height="16" viewBox="0 0 20 20"
+                fill="none" xmlns="http://www.w3.org/2000/svg">
+                <use href="#icon_heart" />
+              </svg><span>Remove to Wishlist</span></a>
+              </form>
+              @else
+              <form method="POST" action="{{ route('wishlist.add') }}" id="wishList_form">
+                                    @csrf
+                                    <input type="hidden" name="id" value="{{ $product->id }}">
+                                    <input type="hidden" name="name" value="{{ $product->name }}">
+                                    <input type="hidden" name="price" value="{{ $product->sale_price == '' ? $product->regular_price : $product->sale_price }}">
+                                    <input type="hidden" name="quantity" value="1">
+              <a href="javascript:void(0)" class="menu-link menu-link_us-s add-to-wishlist" onclick="document.getElementById('wishList_form').submit();"><svg width="16" height="16" viewBox="0 0 20 20"
                 fill="none" xmlns="http://www.w3.org/2000/svg">
                 <use href="#icon_heart" />
               </svg><span>Add to Wishlist</span></a>
+              </form>
+              @endif
             <share-button class="share-button">
               <button class="menu-link menu-link_us-s to-share border-0 bg-transparent d-flex align-items-center">
                 <svg width="16" height="19" viewBox="0 0 16 19" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -395,7 +426,7 @@
             }
           }'>
           <div class="swiper-wrapper">
-            @foreach ($rProducts as $rproduct)                   
+            @foreach ($rProducts as $rproduct)
             <div class="swiper-slide product-card">
               <div class="pc__img-wrapper">
                 <a href="{{ route('shop.details',$rproduct->slug) }}">
@@ -406,9 +437,17 @@
                     alt="{{ $rproduct->name }}" class="pc__img pc__img-second">
                     @endforeach
                 </a>
+                @if (Cart::instance('cart')->content()->where('id',$rproduct->id)->count()>0)
+              <a href="{{ route('cart') }}" class="pc__atc btn anim_appear-bottom btn position-absolute border-0 text-uppercase fw-medium btn-warning mb-3">Go to cart</a>
+          @else
+           <form name="addtocart-form" method="post" action="{{ route('cart.add') }}">
+            @csrf
+            <input type="hidden" name="product_id" value="{{ $rproduct->id }}">
                 <button
-                  class="pc__atc btn anim_appear-bottom btn position-absolute border-0 text-uppercase fw-medium js-add-cart js-open-aside"
+                  class="pc__atc btn anim_appear-bottom btn position-absolute border-0 text-uppercase fw-medium"
                   data-aside="cartDrawer" title="Add To Cart">Add To Cart</button>
+           </form>
+                  @endif
               </div>
 
               <div class="pc__info position-relative">
@@ -423,13 +462,39 @@
                     @endif
                   </span>
                 </div>
+              @if (Cart::instance('wishlist')->content()->where('id', $rproduct->id)->count() > 0)
+    <form method="POST" action="{{ route('wishlist.item.remove', Cart::instance('wishlist')->content()->where('id', $rproduct->id)->first()->rowId) }}">
+        @csrf
+        @method('DELETE')
+        <button
+            type="submit"
+            class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0 js-add-wishlist filled-heart"
+            title="Remove from Wishlist">
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <use href="#icon_heart" />
+            </svg>
+        </button>
+    </form>
+@else
+    <form method="POST" action="{{ route('wishlist.add') }}">
+        @csrf
+        <input type="hidden" name="id" value="{{ $rproduct->id }}">
+        <input type="hidden" name="name" value="{{ $rproduct->name }}">
+        <input type="hidden" name="price" value="{{ $rproduct->sale_price == '' ? $rproduct->regular_price : $rproduct->sale_price }}">
+        <input type="hidden" name="quantity" value="1">
+        <button
+            type="submit"
+            class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0 js-add-wishlist"
+            title="Add To Wishlist">
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <use href="#icon_heart" />
+            </svg>
+        </button>
+    </form>
+@endif
 
-                <button class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0 js-add-wishlist"
-                  title="Add To Wishlist">
-                  <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <use href="#icon_heart" />
-                  </svg>
-                </button>
               </div>
             </div>
               @endforeach
