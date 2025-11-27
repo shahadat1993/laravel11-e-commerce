@@ -32,6 +32,13 @@ Route::put('/cart/decrease/{rowId}',[CartController::class,'decrease_cart_quanti
 Route::delete('/cart/remove/{rowId}',[CartController::class,'remove_cart_item'])->name('cart.item.remove');
 Route::delete('/cart/clear',[CartController::class,'clear_cart'])->name('cart.clear');
 Route::post('/cart/coupon/apply',[CartController::class,'apply_coupon_code'])->name('cart.coupon.apply');
+Route::delete('/cart/coupon/remove',[CartController::class,'remove_coupon_code'])->name('cart.coupon.remove');
+
+
+// CHECKOUT
+Route::get('/checkout',[CartController::class,'checkout'])->name('cart.checkout');
+Route::post('/place-an-order',[CartController::class,'place_an_order'])->name('cart.place.an.order');
+Route::get('/order-confirmation',[CartController::class,'order_confirmation'])->name('cart.order-confirmation');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -41,6 +48,8 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/account-dashboard', [UserController::class, 'index'])->name('user.index');
+    Route::get('/account-order', [UserController::class, 'orders'])->name('user.orders');
+    Route::get('/account-order/{order_id}/details', [UserController::class, 'order_details'])->name('user.orders.details');
 });
 
 // FRONTEND
@@ -92,6 +101,14 @@ Route::middleware(['auth', 'verified', AuthAdmin::class])->group(function () {
     Route::get('/admin/coupons/edit/{id}',[AdminController::class, 'edit_coupon'])->name('admin.coupon.edit');
     Route::put('/admin/coupons/edit/{id}',[AdminController::class, 'update_coupon'])->name('admin.coupon.update');
     Route::delete('/admin/coupons/destroy/{id}',[AdminController::class, 'delete_coupon'])->name('admin.coupon.destroy');
+});
+
+
+// ORDERS
+Route::middleware(['auth', 'verified', AuthAdmin::class])->group(function () {
+    Route::get('/admin/orders',[AdminController::class, 'orders'])->name('admin.orders');
+    Route::get('/admin/order/{order_id}/details',[AdminController::class, 'orderDetails'])->name('admin.orders.details');
+    Route::put('/admin/order/update-status',[AdminController::class, 'update_order_status'])->name('admin.orders.status.update');
 });
 
 // Wishlist Routes

@@ -3,10 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Brand;
+use App\Models\Order;
 use App\Models\Coupons;
+use App\Models\OrderItem;
+use App\Models\Transaction;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use SweetAlert2\Laravel\Swal;
+use Illuminate\Support\Carbon;
 
 class AdminController extends Controller
 {
@@ -221,23 +225,65 @@ class AdminController extends Controller
     }
 
     // DESTROY COUPON METHOD
-   public function delete_coupon($id)
-{
-    $coupon = Coupons::find($id);
+    public function delete_coupon($id)
+    {
+        $coupon = Coupons::find($id);
 
-    if (!$coupon) {
+        if (!$coupon) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Coupon not found!'
+            ]);
+        }
+
+        $coupon->delete();
+
         return response()->json([
-            'success' => false,
-            'message' => 'Coupon not found!'
+            'success' => true,
+            'message' => 'Coupon deleted successfully!'
         ]);
     }
 
-    $coupon->delete();
+    // SHOW ORDERS IN ADMIN PANEL
+    public function orders()
+    {
+        $orders = Order::orderBy('created_at', 'DESC')->paginate(5);
+        return view('admin.orders', compact('orders'));
+    }
 
-    return response()->json([
-        'success' => true,
-        'message' => 'Coupon deleted successfully!'
-    ]);
-}
+    // SHOW ORDER DETAILS IN ADMIN PANEL
+    public function orderDetails($order_id)
+    {
+        $order = Order::find($order_id);
+        $orderItems = OrderItem::where('order_id', $order_id)->orderBy('id')->paginate(6);
+        $transactions = Transaction::where('order_id', $order_id)->first();
+        return view('admin.order-details', compact('order', 'orderItems', 'transactions'));
+    }
 
+
+    // UPDATE ORDER STATUS
+    public function update_order_status(Request $request)
+    {
+        $order = Order::find($request->order_id);
+        $order->status = $request->order_status;
+        if ($request->order_status = 'delivered') {
+            $order->delivered_date = Carbon::now();
+        } else if ($request->order_status == 'canceled') {
+            $order->canceled_date = Carbon::now();
+        }
+        $order->save();
+
+        if($order->order_status == 'delivered'){
+            $transaction= Transaction::where('order_id',$request->order_id)->first();
+            $transaction->status='approved';
+            $transaction->save();
+        }
+        Swal::fire([
+            'title' => 'CodeNest Agency',
+            'text' => 'Order status updated successfully!',
+            'icon' => 'success',
+            'confirmButtonText' => 'ok'
+        ]);
+        return back()->with('success', 'Order status updated successfully!');
+    }
 }

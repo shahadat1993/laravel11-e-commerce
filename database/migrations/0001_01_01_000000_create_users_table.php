@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('mobile')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('uType')->default('ADM')->comment('USR=Normal User or Customer, ADM=Admin User');
+            $table->string('uType')->default('USR')->comment('USR=Normal User or Customer, ADM=Admin User');
             $table->rememberToken();
             $table->timestamps();
         });
