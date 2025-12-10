@@ -50,6 +50,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/account-dashboard', [UserController::class, 'index'])->name('user.index');
     Route::get('/account-order', [UserController::class, 'orders'])->name('user.orders');
     Route::get('/account-order/{order_id}/details', [UserController::class, 'order_details'])->name('user.orders.details');
+   Route::post('/account-order/order-cancel', [UserController::class, 'order_cancel'])->name('user.orders.cancel');
+
 });
 
 // FRONTEND
@@ -60,6 +62,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 // BACKEND
 Route::middleware(['auth', 'verified', AuthAdmin::class])->group(function () {
     Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
+   Route::get('/admin/dashboard/chart-data', [AdminController::class, 'chartData'])->name('admin.dashboard.chart');
     Route::get('/admin/brands', [AdminController::class, 'brands'])->name('admin.brands');
     Route::get('/admin/brands/add', [AdminController::class, 'addBrand'])->name('admin.add-brand');
     Route::post('/admin/brands/store', [AdminController::class, 'store_brand'])->name('admin.store');
@@ -72,6 +75,7 @@ Route::middleware(['auth', 'verified', AuthAdmin::class])->group(function () {
 // CATEGORIES
 Route::middleware(['auth', 'verified', AuthAdmin::class])->group(function () {
     Route::get('/admin/category', [CategoryController::class, 'index'])->name('admin.category.index');
+    Route::get('/category/{slug}', [CategoryController::class, 'show'])->name('category.show');
     Route::get('/admin/category/add', [CategoryController::class, 'add'])->name('admin.category.add');
     Route::post('/admin/category/store', [CategoryController::class, 'store'])->name('admin.category.store');
     Route::get('/admin/category/edit{id}', [CategoryController::class, 'edit'])->name('admin.category.edit');
@@ -89,6 +93,17 @@ Route::middleware(['auth', 'verified', AuthAdmin::class])->group(function () {
     Route::put('/admin/product/update/', [ProductController::class, 'updateProduct'])->name('admin.product.update');
     Route::delete('/admin/product/destroy/{id}', [ProductController::class, 'destroyProduct'])->name('admin.product.destroy');
 
+});
+
+
+// SLIDES
+Route::middleware(['auth', 'verified', AuthAdmin::class])->group(function () {
+    Route::get('/admin/slides', [AdminController::class, 'slides'])->name('admin.slide.index');
+    Route::get('/admin/slide/add', [AdminController::class, 'slide_add'])->name('admin.slide.add');
+    Route::post('/admin/slide/store', [AdminController::class, 'slide_store'])->name('admin.slide.store');
+    Route::get('/admin/slide/edit/{id}', [AdminController::class, 'slide_edit'])->name('admin.slide.edit');
+    Route::put('/admin/slide/update/{id}', [AdminController::class, 'slide_update'])->name('admin.slide.update');
+    Route::delete('/admin/slide/destroy/{id}', [AdminController::class, 'slide_destroy'])->name('admin.slide.delete');
 });
 
 

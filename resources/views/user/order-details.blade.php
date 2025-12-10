@@ -225,34 +225,34 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        @foreach ($order->orderItems as $item)
-                                                <td class="pname" style="border:2;">
-                                                    <div class="image">
-                                                        <img src="{{ asset('uploads/products') . '/' . $item->product->image }}"
-                                                            alt="{{ $item->product->name }}" class="image img-fluid">
+                                    @foreach ($order->orderItems as $item)
+                                        <tr>
+                                            <td class="pname" style="border:2;">
+                                                <div class="image">
+                                                    <img src="{{ asset('uploads/products') . '/' . $item->product->image }}"
+                                                        alt="{{ $item->product->name }}" class="image img-fluid">
+                                                </div>
+                                                <div class="name">
+                                                    <a href="{{ route('shop.details', $item->product->slug) }}" target="_blank"
+                                                        class="body-title-2">{{ $item->product->name }}</a>
+                                                </div>
+                                            </td>
+                                            <td class="text-center">${{ $item->price }}</td>
+                                            <td class="text-center">{{ $item->quantity }}</td>
+                                            <td class="text-center">{{ $item->product->sku }}</td>
+                                            <td class="text-center">{{ $item->product->category->name }}</td>
+                                            <td class="text-center">{{ $item->product->brand->name }}</td>
+                                            <td class="text-center">{{ $item->options }}</td>
+                                            <td class="text-center">{{ $item->rstatus == 0 ? 'NO' : 'YES' }}</td>
+                                            <td class="text-center">
+                                                <div class="list-icon-function view-icon">
+                                                    <div class="item eye">
+                                                        <i class="icon-eye"></i>
                                                     </div>
-                                                    <div class="name">
-                                                        <a href="{{ route('shop.details', $item->product->slug) }}" target="_blank"
-                                                            class="body-title-2">{{ $item->product->name }}</a>
-                                                    </div>
-                                                </td>
-                                                <td class="text-center">${{ $item->price }}</td>
-                                                <td class="text-center">{{ $item->quantity }}</td>
-                                                <td class="text-center">{{ $item->product->sku }}</td>
-                                                <td class="text-center">{{ $item->product->category->name }}</td>
-                                                <td class="text-center">{{ $item->product->brand->name }}</td>
-                                                <td class="text-center">{{ $item->options }}</td>
-                                                <td class="text-center">{{ $item->rstatus == 0 ? 'NO' : 'YES' }}</td>
-                                                <td class="text-center">
-                                                    <div class="list-icon-function view-icon">
-                                                        <div class="item eye">
-                                                            <i class="icon-eye"></i>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        @endforeach
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
 
 
                                 </tbody>
@@ -316,11 +316,94 @@
                             </tbody>
                         </table>
                     </div>
+                    @if($order->status != 'delivered' && $order->status != 'canceled')
+                        <div class="wg-box mt-5 text-right">
+                            <form id="cancelOrderForm" action="{{ route('user.orders.cancel') }}" method="POST">
+                                @csrf
+
+                                <input type="hidden" name="order_id" value="{{ $order->id }}">
+                                <button type="button" id="cancelOrderBtn" class="btn btn-danger" data-id="{{ $order->id }}">
+                                    Cancel Order
+                                </button>
+                            </form>
+
+                        </div>
+                    @endif
 
                 </div>
+
+
             </div>
 
 
         </section>
     </main>
 @endsection
+@push('scripts')
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.getElementById('cancelOrderBtn').addEventListener('click', function () {
+            let orderId = this.getAttribute('data-id');
+            let button = this;
+
+            Swal.fire({
+                title: "Cancel this Order?",
+                text: "You are about to cancel your order. This action cannot be undone.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Yes, Cancel it!",
+                cancelButtonText: "No, Go Back",
+                reverseButtons: true,
+                showClass: { popup: "animate__animated animate__zoomIn animate__faster" },
+                hideClass: { popup: "animate__animated animate__zoomOut animate__faster" }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    button.disabled = true;
+                    button.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Canceling...`;
+
+                    let formData = new FormData();
+                    formData.append('order_id', orderId);
+                    formData.append('_token', '{{ csrf_token() }}');
+
+                    fetch('{{ route("user.orders.cancel") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json' // Laravel কে বলে দাও JSON expect করবে
+                        },
+                        body: formData
+                    })
+
+
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire({
+                                    title: "Order Canceled!",
+                                    text: data.message,
+                                    icon: "success",
+                                    showConfirmButton: false,
+                                    timer: 1800
+                                });
+                                setTimeout(() => location.reload(), 1800);
+                            } else {
+                                Swal.fire("Oops!", data.message, "error");
+                                button.disabled = false;
+                                button.innerHTML = "Cancel Order";
+                            }
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            Swal.fire("Oops!", "Something went wrong", "error");
+                            button.disabled = false;
+                            button.innerHTML = "Cancel Order";
+                        });
+                }
+            });
+        });
+    </script>
+
+
+
+@endpush

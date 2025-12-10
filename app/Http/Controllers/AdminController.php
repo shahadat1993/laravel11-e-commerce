@@ -2,35 +2,125 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Brand;
 use App\Models\Order;
+use App\Models\Slide;
 use App\Models\Coupons;
 use App\Models\OrderItem;
 use App\Models\Transaction;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use SweetAlert2\Laravel\Swal;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
     public function index()
     {
-        return view('admin.index');
+
+
+
+        // All Orders
+        $totalOrders = Order::count();
+
+        // Delivered Orders
+        $deliveredOrders = Order::where('status', 'delivered')->count();
+
+        // Pending Orders
+        $pendingOrders = Order::where('status', 'ordered')->count();
+
+        // Canceled Orders
+        $canceledOrders = Order::where('status', 'canceled')->count();
+
+        // Total Amount
+        $totalAmount = Order::sum('total');
+
+        // Delivered Amount
+        $deliveredAmount = Order::where('status', 'delivered')->sum('total');
+
+        // Pending Amount
+        $pendingAmount = Order::where('status', 'ordered')->sum('total');
+
+        // Canceled Amount
+        $canceledAmount = Order::where('status', 'canceled')->sum('total');
+
+        // Recent 10 Orders
+        $orders = Order::orderBy('created_at', 'DESC')->limit(10)->get();
+
+        $monthlyDatas = DB::select("
+            SELECT 
+                M.id AS MonthNo,
+                M.name AS MonthName,
+                IFNULL(D.TotalAmount, 0) AS TotalAmount,
+                IFNULL(D.TotalOrderedAmount, 0) AS TotalOrderedAmount,
+                IFNULL(D.TotalDeliveredAmount, 0) AS TotalDeliveredAmount,
+                IFNULL(D.TotalCanceledAmount, 0) AS TotalCanceledAmount
+            FROM month_names M
+            LEFT JOIN (
+                SELECT 
+                    MONTH(created_at) AS MonthNo,
+                    SUM(total) AS TotalAmount,
+                    SUM(IF(status = 'ordered', total, 0)) AS TotalOrderedAmount,
+                    SUM(IF(status = 'delivered', total, 0)) AS TotalDeliveredAmount,
+                    SUM(IF(status = 'canceled', total, 0)) AS TotalCanceledAmount
+                FROM orders
+                WHERE YEAR(created_at) = YEAR(NOW())
+                GROUP BY MONTH(created_at)
+            ) D ON D.MonthNo = M.id
+            ORDER BY M.id
+        ");
+            $amountM = collect($monthlyDatas)
+    ->pluck('TotalAmount')
+    ->map(fn($v) => floatval($v))
+    ->toArray();
+
+$orderedAmountM = collect($monthlyDatas)
+    ->pluck('TotalOrderedAmount')
+    ->map(fn($v) => floatval($v))
+    ->toArray();
+
+$deliveredAmountM = collect($monthlyDatas)
+    ->pluck('TotalDeliveredAmount')
+    ->map(fn($v) => floatval($v))
+    ->toArray();
+
+$canceledAmountM = collect($monthlyDatas)
+    ->pluck('TotalCanceledAmount')
+    ->map(fn($v) => floatval($v))
+    ->toArray();
+
+
+
+        $totalAmount = collect($monthlyDatas)->sum('TotalAmount');
+        $totalOrderedAmount = collect($monthlyDatas)->sum('TotalOrderedAmount');
+        $totalDeliveredAmount = collect($monthlyDatas)->sum('TotalDeliveredAmount');
+        $totalCanceledAmount = collect($monthlyDatas)->sum('TotalCanceledAmount');
+
+
+        return view('admin.index', compact(
+            'totalOrders',
+            'deliveredOrders',
+            'pendingOrders',
+            'canceledOrders',
+            'totalAmount',
+            'deliveredAmount',
+            'pendingAmount',
+            'canceledAmount',
+            'orders',
+            'amountM',
+            'orderedAmountM',
+            'deliveredAmountM',
+            'canceledAmountM',
+            'totalAmount',
+            'totalOrderedAmount',
+            'totalDeliveredAmount',
+            'totalCanceledAmount'
+
+        ));
     }
 
-    public function brands()
-    {
-        $brands = Brand::orderBy('id', 'DESC')->paginate(5);
 
-        return view('admin.brands', compact('brands'));
-    }
-
-    public function addBrand()
-    {
-        // dd('add brand route working');
-        return view('admin.add-brand');
-    }
 
     // STORE BRAND
     public function store_brand(Request $request)
@@ -273,9 +363,9 @@ class AdminController extends Controller
         }
         $order->save();
 
-        if($order->order_status == 'delivered'){
-            $transaction= Transaction::where('order_id',$request->order_id)->first();
-            $transaction->status='approved';
+        if ($order->order_status == 'delivered') {
+            $transaction = Transaction::where('order_id', $request->order_id)->first();
+            $transaction->status = 'approved';
             $transaction->save();
         }
         Swal::fire([
@@ -285,5 +375,143 @@ class AdminController extends Controller
             'confirmButtonText' => 'ok'
         ]);
         return back()->with('success', 'Order status updated successfully!');
+    }
+
+    // SLIDES SHOW METHOD
+    public function slides()
+    {
+        $slides = Slide::orderBy('id', 'DESC')->paginate(5);
+        return view('admin.slides.slides', compact('slides'));
+    }
+
+    // SLIDE ADD METHOD
+    public function slide_add()
+    {
+        return view('admin.slides.add-slide');
+    }
+
+    // SLIDE STORE METHOD
+    public function slide_store(Request $request)
+    {
+        $request->validate([
+            'tagline'   => 'required',
+            'title'     => 'required',
+            'subtitle'  => 'nullable',
+            'link'      => 'required|url',
+            'status'    => 'required|in:0,1',
+            'image'     => 'required|image|mimes:png,jpeg,jpg,webp|max:5120',
+        ]);
+
+        $slide = new Slide();
+        $slide->tagline  = $request->tagline;
+        $slide->title    = $request->title;
+        $slide->subtitle = $request->subtitle;
+        $slide->link     = $request->link;
+        $slide->status   = $request->status;
+
+        // Folder path
+        $folderPath = public_path('uploads/slides');
+
+        // Create folder if not exists
+        if (!file_exists($folderPath)) {
+            mkdir($folderPath, 0755, true);
+        }
+
+        // Image upload
+        $imageName = time() . '-' . uniqid() . '.' . $request->image->extension();
+        $request->image->move($folderPath, $imageName);
+
+        // Insert data
+        $slide->image    = $imageName;
+        $slide->save();
+
+        // Only session message (Swal must be in Blade)
+        //    Swal::fire([
+        //             'title' => 'Surfside Media',
+        //             'text' => 'Slide added successfully!',
+        //             'icon' => 'success',
+        //             'confirmButtonText' => 'ok'
+        //         ]);
+        return redirect()->route('admin.slide.index')
+            ->with('success', 'Slide added successfully!');
+    }
+
+
+    // SLIDE EDIT METHOD
+    public function slide_edit($id)
+    {
+        $slide = Slide::findOrFail($id);
+        return view('admin.slides.edit-slide', compact('slide'));
+    }
+
+    // SLIDE UPDATE METHOD
+    public function slide_update(Request $request, $id)
+    {
+        $request->validate([
+            'tagline'   => 'required',
+            'title'     => 'required',
+            'subtitle'  => 'nullable',
+            'link'      => 'required|url',
+            'status'    => 'required|in:0,1',
+            'image' => 'nullable|image|mimes:png,jpeg,jpg,webp|max:5120',
+        ]);
+
+
+        // Insert data
+        $slide = Slide::findOrFail($id);
+        $slide->tagline  = $request->tagline;
+        $slide->title    = $request->title;
+        $slide->subtitle = $request->subtitle;
+        $slide->link     = $request->link;
+        $slide->status   = $request->status;
+
+        // Folder path
+        $folderPath = public_path('uploads/slides');
+
+        // Create folder if not exists
+        if (!file_exists($folderPath)) {
+            mkdir($folderPath, 0755, true);
+        }
+
+        // Image upload
+        if ($request->hasFile('image')) {
+            // delete old image
+            if (file_exists(public_path('uploads/slides/' . $slide->image))) {
+                unlink(public_path('uploads/slides/' . $slide->image));
+            }
+            // upload new image
+            $imageName = time() . '-' . uniqid() . '.' . $request->image->extension();
+            $request->image->move($folderPath, $imageName);
+            $slide->image = $imageName;
+            $slide->image    = $imageName;
+        }
+
+
+        $slide->save();
+
+        // Only session message (Swal must be in Blade)
+        //    Swal::fire([
+        //             'title' => 'Surfside Media',
+        //             'text' => 'Slide updated successfully!',
+        //             'icon' => 'success',
+        //             'confirmButtonText' => 'ok'
+        //         ]);
+        return redirect()->route('admin.slide.index')
+            ->with('success', 'Slide updated successfully!');
+    }
+
+    // DELETE SLIDE METHOD
+    public function slide_destroy($id)
+    {
+        $slide = Slide::findOrFail($id);
+        if (file_exists(public_path('uploads/slides/' . $slide->image))) {
+            unlink(public_path('uploads/slides/' . $slide->image));
+        }
+        $slide->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Slide deleted successfully!'
+        ]);
     }
 }

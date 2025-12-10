@@ -55,27 +55,35 @@
                             <tbody>
                                 @foreach ($orders as $order)
 
-                                <tr>
-                                    <td class="text-center">{{ $order->id }}</td>
-                                    <td class="text-center">{{ $order->name }}</td>
-                                    <td class="text-center">{{ $order->phone }}</td>
-                                    <td class="text-center">${{ $order->subtotal }}</td>
-                                    <td class="text-center">${{ $order->tax }}</td>
-                                    <td class="text-center">${{ $order->total }}</td>
-                                    <td class="text-center">{{ $order->status }}</td>
-                                    <td class="text-center">{{ $order->created_at }}</td>
-                                    <td class="text-center">2{{ $order->orderItems->count() }}</td>
-                                    <td class="text-center">{{ $order->delivered_date }}</td>
-                                    <td class="text-center">
-                                        <a href="{{ route('admin.orders.details',$order->id) }}">
-                                            <div class="list-icon-function view-icon">
-                                                <div class="item eye">
-                                                    <i class="icon-eye"></i>
+                                    <tr>
+                                        <td class="text-center">{{ $loop->iteration }}</td>
+                                        <td class="text-center">{{ $order->name }}</td>
+                                        <td class="text-center">{{ $order->phone }}</td>
+                                        <td class="text-center">${{ $order->subtotal }}</td>
+                                        <td class="text-center">${{ $order->tax }}</td>
+                                        <td class="text-center">${{ $order->total }}</td>
+                                        <td class="text-center">
+                                            @if ($order->status == 'delivered')
+                                                <span class="badge bg-success">Delivered</span>
+                                            @elseif ($order->status == 'canceled')
+                                                <span class="badge bg-danger">Canceled</span>
+                                            @else
+                                                <span class="badge bg-warning">Ordered</span>
+                                            @endif
+                                        </td>
+                                        <td class="text-center">{{ $order->created_at }}</td>
+                                        <td class="text-center">2{{ $order->orderItems->count() }}</td>
+                                        <td class="text-center">{{ $order->delivered_date }}</td>
+                                        <td class="text-center">
+                                            <a href="{{ route('admin.orders.details', $order->id) }}">
+                                                <div class="list-icon-function view-icon">
+                                                    <div class="item eye">
+                                                        <i class="icon-eye"></i>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </a>
-                                    </td>
-                                </tr>
+                                            </a>
+                                        </td>
+                                    </tr>
                                 @endforeach
 
                             </tbody>
@@ -84,8 +92,8 @@
                 </div>
                 <div class="divider"></div>
                 <div class="d-flex align-items-center justify-content-center">
-                        {{ $orders->links('pagination::bootstrap-5') }}
-                    </div>
+                    {{ $orders->links('pagination::bootstrap-5') }}
+                </div>
             </div>
         </div>
     </div>

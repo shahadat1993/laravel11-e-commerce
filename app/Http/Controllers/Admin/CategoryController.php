@@ -11,18 +11,21 @@ use App\Http\Controllers\Controller;
 class CategoryController extends Controller
 {
     // CATEGORY INDEX
-    public function index(){
-        $categories=Category::orderBy('id','DESC')->paginate(6);
-        return view('admin.category.index',compact('categories'));
+    public function index()
+    {
+        $categories = Category::orderBy('id', 'DESC')->paginate(6);
+        return view('admin.category.index', compact('categories'));
     }
 
     // CATEGORY ADD
-    public function add(){
+    public function add()
+    {
         return view('admin.category.add');
     }
 
     // CATEGORY STORE
-    public function store(Request $request){
+    public function store(Request $request)
+    {
         // 🔹 Step 1: Validate the input
         $request->validate([
             'category_name' => 'required|string|max:255',
@@ -40,12 +43,11 @@ class CategoryController extends Controller
         // 🔹 Step 3: Handle Image Upload
         if ($request->hasFile('category_image')) {
             $file = $request->file('category_image');
-            $filename = time().rand(1000, 9999).'.'.$file->getClientOriginalExtension();
+            $filename = time() . rand(1000, 9999) . '.' . $file->getClientOriginalExtension();
 
             // Move original image
             $file->move(public_path('uploads/categories'), $filename);
             $category->image = $filename;
-
         }
 
         // 🔹 Step 4: Save Brand
@@ -62,17 +64,19 @@ class CategoryController extends Controller
     }
 
     // EDIT CATEGORY
-    public function edit($id){
-        $category=Category::findOrFail($id);
-        return view('admin.category.edit',compact('category'));
+    public function edit($id)
+    {
+        $category = Category::findOrFail($id);
+        return view('admin.category.edit', compact('category'));
     }
 
     // CATEGORY UPDATE
-    public function update(Request $request){
-          // 🔹 Step 1: Validate the input
+    public function update(Request $request)
+    {
+        // 🔹 Step 1: Validate the input
         $request->validate([
             'category_name' => 'required|string|max:255',
-            'category_slug' => 'nullable|string|unique:categories,slug,'.$request->id,
+            'category_slug' => 'nullable|string|unique:categories,slug,' . $request->id,
             'category_image' => 'nullable|image|mimes:jpg,jpeg,webp,png|max:2048',
         ]);
 
@@ -86,12 +90,12 @@ class CategoryController extends Controller
         // Delete Old Image
         if ($request->hasFile('category_image')) {
             // পুরনো image delete করো (যদি থাকে)
-            if ($category->image && file_exists(public_path('uploads/categories/'.$category->image))) {
-                unlink(public_path('uploads/categories/'.$category->image));
+            if ($category->image && file_exists(public_path('uploads/categories/' . $category->image))) {
+                unlink(public_path('uploads/categories/' . $category->image));
             }
 
             $file = $request->file('category_image');
-            $filename = time().'.'.$file->getClientOriginalName();
+            $filename = time() . '.' . $file->getClientOriginalName();
             $file->move(public_path('uploads/categories'), $filename);
             $category->image = $filename;
         }
@@ -110,15 +114,15 @@ class CategoryController extends Controller
     }
 
     // CATEGORY DELETE METHOD
-     public function destroy($id)
+    public function destroy($id)
     {
-       
+
         $category = Category::findOrFail($id);
 
         // যদি image থাকে, তাহলে public/uploads/brands থেকে ফাইল ডিলেট করো
-        if ($category->image && file_exists(public_path('uploads/categories/'.$category->image))) {
+        if ($category->image && file_exists(public_path('uploads/categories/' . $category->image))) {
 
-            unlink(public_path('uploads/categories/'.$category->image));
+            unlink(public_path('uploads/categories/' . $category->image));
         }
 
         // Delete the DB record
@@ -132,5 +136,15 @@ class CategoryController extends Controller
 
         // ✅ Normal redirect (যদি AJAX না হয়)
         return redirect()->route('admin.category.index')->with('success', 'Category deleted successfully.');
+    }
+
+    // SHOW CATEGORY ON FRONTEND
+    public function show($slug)
+    {
+        $category = Category::where('slug', $slug)->firstOrFail();
+
+        $products = $category->products;  // সব product
+
+        return view('category-products', compact('category', 'products'));
     }
 }
