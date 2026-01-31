@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\Brand;
+use App\Models\Contact;
 use App\Models\Order;
 use App\Models\Slide;
 use App\Models\Coupons;
@@ -49,7 +50,7 @@ class AdminController extends Controller
         $orders = Order::orderBy('created_at', 'DESC')->limit(10)->get();
 
         $monthlyDatas = DB::select("
-            SELECT 
+            SELECT
                 M.id AS MonthNo,
                 M.name AS MonthName,
                 IFNULL(D.TotalAmount, 0) AS TotalAmount,
@@ -58,7 +59,7 @@ class AdminController extends Controller
                 IFNULL(D.TotalCanceledAmount, 0) AS TotalCanceledAmount
             FROM month_names M
             LEFT JOIN (
-                SELECT 
+                SELECT
                     MONTH(created_at) AS MonthNo,
                     SUM(total) AS TotalAmount,
                     SUM(IF(status = 'ordered', total, 0)) AS TotalOrderedAmount,
@@ -121,7 +122,17 @@ $canceledAmountM = collect($monthlyDatas)
     }
 
 
+    // BRANDS METHOD
+    public function brands(){
+        $brands=Brand::orderBy('id','DESC')->paginate(5);
+        return view('admin.brands',compact('brands'));
+    }
 
+    // ADD BRAND
+
+    public function addBrand(){
+        return view('admin.add-brand');
+    }
     // STORE BRAND
     public function store_brand(Request $request)
     {
@@ -512,6 +523,22 @@ $canceledAmountM = collect($monthlyDatas)
         return response()->json([
             'success' => true,
             'message' => 'Slide deleted successfully!'
+        ]);
+    }
+
+    // Contact Method
+    public function contacts(){
+        $contacts = Contact::orderBy('created_at','DESC')->paginate(10);
+        return view('admin.contact',compact('contacts'));
+    }
+
+    // Admin Contact Delete method
+    public function delete_contact($id){
+        $contact = Contact::find($id);
+        $contact->delete();
+        return response()->json([
+            'success' => true,
+            'message' => 'Message deleted successfully!'
         ]);
     }
 }

@@ -40,6 +40,13 @@ Route::get('/checkout',[CartController::class,'checkout'])->name('cart.checkout'
 Route::post('/place-an-order',[CartController::class,'place_an_order'])->name('cart.place.an.order');
 Route::get('/order-confirmation',[CartController::class,'order_confirmation'])->name('cart.order-confirmation');
 
+
+// CONTACT-US
+Route::middleware('auth')->group(function () {
+    Route::get('/contact-us',[EcommerceController::class, 'contact'])->name('home.contact');
+    Route::post('/contact-store',[EcommerceController::class, 'contact_store'])->name('home.contact.store');
+});
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -133,3 +140,10 @@ Route::delete('/wishlist/item/remove/{rowId}', [WishListController::class, 'remo
 Route::delete('/wishlist/clear', [WishListController::class, 'empty_wishlist'])->name('wishlist.destroy');
 Route::post('/wishlist/move-to-cart/{rowId}', [WishListController::class, 'move_to_cart'])->name('wishlist.move.to.cart');
 require __DIR__.'/auth.php';
+
+
+
+Route::middleware(['auth', 'verified', AuthAdmin::class])->group(function () {
+    Route::get('/admin/contact', [AdminController::class, 'contacts'])->name('admin.contact.index');
+    Route::delete('/admin/contact/delete/{id}', [AdminController::class, 'delete_contact'])->name('admin.contact.destroy');
+});

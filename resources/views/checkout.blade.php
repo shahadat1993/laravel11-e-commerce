@@ -80,8 +80,8 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-floating my-3">
-                                        <input type="text" class="form-control" name="phone" value="{{ old('phone') }}"
-                                            required="">
+                                        <input type="text" class="form-control" name="phone"
+                                            value="{{ old('phone') }}" required="">
                                         <label for="phone">Phone Number *</label>
                                         @error('phone')
                                             <p class="text-danger">{{ $message }}</p>
@@ -90,7 +90,8 @@
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-floating my-3">
-                                        <input type="text" class="form-control" name="zip" value="{{ old('zip') }}" required="">
+                                        <input type="text" class="form-control" name="zip"
+                                            value="{{ old('zip') }}" required="">
                                         <label for="zip">Pincode *</label>
                                         @error('zip')
                                             <p class="text-danger">{{ $message }}</p>
@@ -99,8 +100,8 @@
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-floating mt-3 mb-3">
-                                        <input type="text" class="form-control" name="state" value="{{ old('state') }}"
-                                            required="">
+                                        <input type="text" class="form-control" name="state"
+                                            value="{{ old('state') }}" required="">
                                         <label for="state">State *</label>
                                         @error('state')
                                             <p class="text-danger">{{ $message }}</p>
@@ -109,8 +110,8 @@
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-floating my-3">
-                                        <input type="text" class="form-control" name="city" value="{{ old('city') }}"
-                                            required="">
+                                        <input type="text" class="form-control" name="city"
+                                            value="{{ old('city') }}" required="">
                                         <label for="city">Town / City *</label>
                                         @error('city')
                                             <p class="text-danger">{{ $message }}</p>
@@ -119,8 +120,8 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-floating my-3">
-                                        <input type="text" class="form-control" name="address" value="{{ old('address') }}"
-                                            required="">
+                                        <input type="text" class="form-control" name="address"
+                                            value="{{ old('address') }}" required="">
                                         <label for="address">House no, Building Name *</label>
                                         @error('address')
                                             <p class="text-danger">{{ $message }}</p>
@@ -129,8 +130,8 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-floating my-3">
-                                        <input type="text" class="form-control" name="locality" value="{{ old('locality') }}"
-                                            required="">
+                                        <input type="text" class="form-control" name="locality"
+                                            value="{{ old('locality') }}" required="">
                                         <label for="locality">Road Name, Area, Colony *</label>
                                         @error('locality')
                                             <p class="text-danger">{{ $message }}</p>
@@ -139,8 +140,8 @@
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-floating my-3">
-                                        <input type="text" class="form-control" name="landmark" value="{{ old('landmark') }}"
-                                            required="">
+                                        <input type="text" class="form-control" name="landmark"
+                                            value="{{ old('landmark') }}" required="">
                                         <label for="landmark">Landmark *</label>
                                         @error('landmark')
                                             <p class="text-danger">{{ $message }}</p>

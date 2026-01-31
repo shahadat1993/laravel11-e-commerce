@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta name="author" content="surfside media" />
-    <link rel="shortcut icon" href="assets/images/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.gstatic.com/">
     <link
         href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
@@ -18,7 +18,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
         integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw=="
         crossorigin="anonymous" referrerpolicy="no-referrer">
-    @stack('scripts')
     <style>
         #header {
             padding-top: 8px;
@@ -27,6 +26,120 @@
 
         .logo__image {
             max-width: 220px;
+        }
+
+
+        /* Toast style */
+        .toast-wrapper {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+
+        .app-toast {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            min-width: 320px;
+            max-width: 420px;
+            padding: 18px 22px;
+            border-radius: 12px;
+            background: #ffffff;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            font-family: system-ui, sans-serif;
+            animation: slideIn 0.4s ease forwards;
+            position: relative;
+        }
+
+        .app-toast.success {
+            border-left: 6px solid #22c55e;
+        }
+
+        .toast-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #22c55e;
+            color: #fff;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .toast-content strong {
+            font-size: 15px;
+            color: #111;
+        }
+
+        .toast-content p {
+            margin: 2px 0 0;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .toast-close {
+            margin-left: auto;
+            cursor: pointer;
+            font-size: 20px;
+            color: #888;
+        }
+
+        .toast-close:hover {
+            color: #000;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(40px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* 🌙 Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            .app-toast {
+                background: #1f2937;
+                box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+            }
+
+            .toast-content strong {
+                color: #fff;
+            }
+
+            .toast-content p {
+                color: #d1d5db;
+            }
+        }
+
+
+        .toast-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            width: 100%;
+            background: linear-gradient(90deg, #22c55e, #16a34a);
+            animation: toastProgress 3s linear forwards;
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+        }
+
+        @keyframes toastProgress {
+            from {
+                width: 100%;
+            }
+
+            to {
+                width: 0%;
+            }
         }
     </style>
 </head>
@@ -316,13 +429,13 @@
                             <a href="{{ route('shop') }}" class="navigation__link">Shop</a>
                         </li>
                         <li class="navigation__item">
-                            <a href="{{route('cart')}}" class="navigation__link">Cart</a>
+                            <a href="{{ route('cart') }}" class="navigation__link">Cart</a>
                         </li>
                         <li class="navigation__item">
                             <a href="about.html" class="navigation__link">About</a>
                         </li>
                         <li class="navigation__item">
-                            <a href="contact.html" class="navigation__link">Contact</a>
+                            <a href="{{ route('home.contact') }}" class="navigation__link">Contact</a>
                         </li>
                     </ul>
                 </div>
@@ -392,7 +505,8 @@
             <div class="header-desk header-desk_type_1">
                 <div class="logo">
                     <a href="{{ route('home') }}">
-                        <img src="{{ asset('assets/images/siteLogo.png')}}" alt="Uomo" class="logo__image d-block"/>
+                        <img src="{{ asset('assets/images/siteLogo.png') }}" alt="Uomo"
+                            class="logo__image d-block" />
                     </a>
                 </div>
 
@@ -405,13 +519,13 @@
                             <a href="{{ route('shop') }}" class="navigation__link">Shop</a>
                         </li>
                         <li class="navigation__item">
-                            <a href="{{route('cart')}}" class="navigation__link">Cart</a>
+                            <a href="{{ route('cart') }}" class="navigation__link">Cart</a>
                         </li>
                         <li class="navigation__item">
                             <a href="about.html" class="navigation__link">About</a>
                         </li>
                         <li class="navigation__item">
-                            <a href="contact.html" class="navigation__link">Contact</a>
+                            <a href="{{ route('home.contact') }}" class="navigation__link">Contact</a>
                         </li>
                     </ul>
                 </nav>
@@ -482,14 +596,14 @@
                         </div>
                     @else
                         <div class="header-tools__item hover-container">
-                            <a href="{{ auth()->user()->uType === 'ADM' ? route('admin.index') : route('user.index')}}"
-                                    class="header-tools__item">
-                                        <span class="pr-6px">{{ auth()->user()->name }}</span>
-                                        <svg class="d-block" width="20" height="20" viewBox="0 0 20 20" fill="none"
-                                            xmlns="http://www.w3.org/2000/svg">
-                                            <use href="#icon_user" />
-                                        </svg>
-                                    </a>
+                            <a href="{{ auth()->user()->uType === 'ADM' ? route('admin.index') : route('user.index') }}"
+                                class="header-tools__item">
+                                <span class="pr-6px">{{ auth()->user()->name }}</span>
+                                <svg class="d-block" width="20" height="20" viewBox="0 0 20 20" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <use href="#icon_user" />
+                                </svg>
+                            </a>
 
                         </div>
                     @endguest
@@ -499,18 +613,20 @@
                             xmlns="http://www.w3.org/2000/svg">
                             <use href="#icon_heart" />
                         </svg>
-                        @if (Cart::instance('wishlist')->content()->count()>0)
-                             <span class="cart-amount d-block position-absolute js-cart-items-count">{{ Cart::instance('wishlist')->content()->count() }}</span>
+                        @if (Cart::instance('wishlist')->content()->count() > 0)
+                            <span
+                                class="cart-amount d-block position-absolute js-cart-items-count">{{ Cart::instance('wishlist')->content()->count() }}</span>
                         @endif
                     </a>
 
-                    <a href="{{route('cart')}}" class="header-tools__item header-tools__cart">
+                    <a href="{{ route('cart') }}" class="header-tools__item header-tools__cart">
                         <svg class="d-block" width="20" height="20" viewBox="0 0 20 20" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
                             <use href="#icon_cart" />
                         </svg>
-                        @if (Cart::instance('cart')->content()->count()>0)
-                             <span class="cart-amount d-block position-absolute js-cart-items-count">{{ Cart::instance('cart')->content()->count() }}</span>
+                        @if (Cart::instance('cart')->content()->count() > 0)
+                            <span
+                                class="cart-amount d-block position-absolute js-cart-items-count">{{ Cart::instance('cart')->content()->count() }}</span>
                         @endif
                     </a>
                 </div>
@@ -521,6 +637,27 @@
 
 
     @yield('content')
+
+
+    {{-- Success Session msg --}}
+    @if (session('success'))
+        <div class="toast-wrapper">
+            <div id="appToast" class="app-toast success">
+                <div class="toast-icon">✓</div>
+
+                <div class="toast-content">
+                    <strong>Success</strong>
+                    <p>{{ session('success') }}</p>
+                </div>
+
+                <span class="toast-close">&times;</span>
+
+                {{-- progress bar --}}
+                <div class="toast-progress"></div>
+            </div>
+        </div>
+    @endif
+
 
 
 
@@ -699,14 +836,36 @@
 
     <div id="scrollTop" class="visually-hidden end-0"></div>
     <div class="page-overlay"></div>
-     @include('sweetalert2::index')
+    @include('sweetalert2::index')
     <script src="{{ asset('assets/js/plugins/jquery.min.js') }}"></script>
     <script src="{{ asset('assets/js/plugins/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('assets/js/plugins/bootstrap-slider.min.js') }}"></script>
     <script src="{{ asset('assets/js/plugins/swiper.min.js') }}"></script>
     <script src="{{ asset('assets/js/plugins/countdown.js') }}"></script>
     <script src="{{ asset('assets/js/theme.js') }}"></script>
+
+    {{-- Bootstrap JS --}}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    {{-- Toast trigger --}}
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const toast = document.getElementById('appToast');
+            if (!toast) return;
+
+            const closeBtn = toast.querySelector('.toast-close');
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(40px)';
+                setTimeout(() => toast.remove(), 400);
+            }, 3000);
+
+            closeBtn.addEventListener('click', () => toast.remove());
+        });
+    </script>
+
     @stack('scripts')
-</body>
+</body>∏
 
 </html>
