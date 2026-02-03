@@ -33,6 +33,180 @@
         .logo__image {
             max-width: 220px;
         }
+
+        /* toast styles */
+        /* Toast style */
+        .toast-wrapper {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+
+        .app-toast {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            min-width: 320px;
+            max-width: 420px;
+            padding: 18px 22px;
+            border-radius: 12px;
+            background: #ffffff;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            font-family: system-ui, sans-serif;
+            animation: slideIn 0.4s ease forwards;
+            position: relative;
+        }
+
+        .app-toast.success {
+            border-left: 6px solid #22c55e;
+        }
+
+        .toast-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #22c55e;
+            color: #fff;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .toast-content strong {
+            font-size: 15px;
+            color: #111;
+        }
+
+        .toast-content p {
+            margin: 2px 0 0;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .toast-close {
+            margin-left: auto;
+            cursor: pointer;
+            font-size: 20px;
+            color: #888;
+        }
+
+        .toast-close:hover {
+            color: #000;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(40px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* 🌙 Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            .app-toast {
+                background: #1f2937;
+                box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+            }
+
+            .toast-content strong {
+                color: #fff;
+            }
+
+            .toast-content p {
+                color: #d1d5db;
+            }
+        }
+
+
+        .toast-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            width: 100%;
+            background: linear-gradient(90deg, #22c55e, #16a34a);
+            animation: toastProgress 3s linear forwards;
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+        }
+
+        @keyframes toastProgress {
+            from {
+                width: 100%;
+            }
+
+            to {
+                width: 0%;
+            }
+        }
+
+        /* SEARCH METHOD STYLES */
+        .search-wrapper {
+            position: relative;
+            max-width: 120px;
+        }
+
+        /* magnifying glass inside input */
+        .
+
+        /* search result box */
+        #box-content-search {
+            position: absolute;
+            top: calc(100% + 6px);
+            /* input-এর ঠিক নিচে আসবে */
+            left: 0;
+            width: 100%;
+            /* input-এর সাথে width match করবে */
+            max-width: 420px;
+            /* চাইলে adjust করো */
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 6px 0;
+            box-shadow: 0 14px 35px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            z-index: 9999;
+            max-height: 300px;
+            overflow-y: auto;
+            box-sizing: border-box;
+            font-family: sans-serif;
+        }
+
+        /* each list item */
+        #box-content-search li {
+            list-style: none;
+        }
+
+        /* links inside search results */
+        #box-content-search a {
+            display: block;
+            padding: 10px 18px;
+            font-size: 14.5px;
+            color: #222;
+            text-decoration: none;
+            transition: background 0.15s ease, padding-left 0.15s ease;
+        }
+
+        /* hover effect */
+        #box-content-search a:hover {
+            background: #f3f6ff;
+            padding-left: 24px;
+            color: #2b59ff;
+        }
+
+        /* optional: empty message */
+        #box-content-search .search-empty {
+            padding: 10px 18px;
+            font-size: 14px;
+            color: #777;
+        }
     </style>
 </head>
 
@@ -135,12 +309,12 @@
                                     </a>
                                     <ul class="sub-menu">
                                         <li class="sub-menu-item">
-                                            <a href="{{route('admin.orders')}}" class="">
+                                            <a href="{{ route('admin.orders') }}" class="">
                                                 <div class="text">Orders</div>
                                             </a>
                                         </li>
                                         <li class="sub-menu-item">
-                                            <a href="order-tracking.html" class="">
+                                            <a href="{{ route('admin.order.track') }}" class="">
                                                 <div class="text">Order tracking</div>
                                             </a>
                                         </li>
@@ -166,14 +340,14 @@
                                 </li>
 
                                 <li class="menu-item">
-                                    <a href="users.html" class="">
+                                    <a href="{{ route('admin.profile.show') }}" class="">
                                         <div class="icon"><i class="icon-user"></i></div>
                                         <div class="text">User</div>
                                     </a>
                                 </li>
 
                                 <li class="menu-item">
-                                    <a href="settings.html" class="">
+                                    <a href="{{ route('admin.profile') }}" class="">
                                         <div class="icon"><i class="icon-settings"></i></div>
                                         <div class="text">Settings</div>
                                     </a>
@@ -212,130 +386,15 @@
 
                                 <form class="form-search flex-grow">
                                     <fieldset class="name">
-                                        <input type="text" placeholder="Search here..." class="show-search"
-                                            name="name" tabindex="2" value="" aria-required="true"
-                                            required="">
+                                        <input type="text" placeholder="Search here..." id="search-input"
+                                            class="show-search" name="name" tabindex="2" value=""
+                                            aria-required="true" required="">
                                     </fieldset>
                                     <div class="button-submit">
                                         <button class="" type="submit"><i class="icon-search"></i></button>
                                     </div>
-                                    <div class="box-content-search" id="box-content-search">
-                                        <ul class="mb-24">
-                                            <li class="mb-14">
-                                                <div class="body-title">Top selling product</div>
-                                            </li>
-                                            <li class="mb-14">
-                                                <div class="divider"></div>
-                                            </li>
-                                            <li>
-                                                <ul>
-                                                    <li class="product-item gap14 mb-10">
-                                                        <div class="image no-bg">
-                                                            <img src="images/products/17.png" alt="">
-                                                        </div>
-                                                        <div class="flex items-center justify-between gap20 flex-grow">
-                                                            <div class="name">
-                                                                <a href="product-list.html" class="body-text">Dog Food
-                                                                    Rachael Ray Nutrish®</a>
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                    <li class="mb-10">
-                                                        <div class="divider"></div>
-                                                    </li>
-                                                    <li class="product-item gap14 mb-10">
-                                                        <div class="image no-bg">
-                                                            <img src="images/products/18.png" alt="">
-                                                        </div>
-                                                        <div class="flex items-center justify-between gap20 flex-grow">
-                                                            <div class="name">
-                                                                <a href="product-list.html" class="body-text">Natural
-                                                                    Dog Food Healthy Dog Food</a>
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                    <li class="mb-10">
-                                                        <div class="divider"></div>
-                                                    </li>
-                                                    <li class="product-item gap14">
-                                                        <div class="image no-bg">
-                                                            <img src="images/products/19.png" alt="">
-                                                        </div>
-                                                        <div class="flex items-center justify-between gap20 flex-grow">
-                                                            <div class="name">
-                                                                <a href="product-list.html" class="body-text">Freshpet
-                                                                    Healthy Dog Food and Cat</a>
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                        </ul>
-                                        <ul class="">
-                                            <li class="mb-14">
-                                                <div class="body-title">Order product</div>
-                                            </li>
-                                            <li class="mb-14">
-                                                <div class="divider"></div>
-                                            </li>
-                                            <li>
-                                                <ul>
-                                                    <li class="product-item gap14 mb-10">
-                                                        <div class="image no-bg">
-                                                            <img src="images/products/20.png" alt="">
-                                                        </div>
-                                                        <div class="flex items-center justify-between gap20 flex-grow">
-                                                            <div class="name">
-                                                                <a href="product-list.html" class="body-text">Sojos
-                                                                    Crunchy Natural Grain Free...</a>
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                    <li class="mb-10">
-                                                        <div class="divider"></div>
-                                                    </li>
-                                                    <li class="product-item gap14 mb-10">
-                                                        <div class="image no-bg">
-                                                            <img src="images/products/21.png" alt="">
-                                                        </div>
-                                                        <div class="flex items-center justify-between gap20 flex-grow">
-                                                            <div class="name">
-                                                                <a href="product-list.html" class="body-text">Kristin
-                                                                    Watson</a>
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                    <li class="mb-10">
-                                                        <div class="divider"></div>
-                                                    </li>
-                                                    <li class="product-item gap14 mb-10">
-                                                        <div class="image no-bg">
-                                                            <img src="images/products/22.png" alt="">
-                                                        </div>
-                                                        <div class="flex items-center justify-between gap20 flex-grow">
-                                                            <div class="name">
-                                                                <a href="product-list.html" class="body-text">Mega
-                                                                    Pumpkin Bone</a>
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                    <li class="mb-10">
-                                                        <div class="divider"></div>
-                                                    </li>
-                                                    <li class="product-item gap14">
-                                                        <div class="image no-bg">
-                                                            <img src="images/products/23.png" alt="">
-                                                        </div>
-                                                        <div class="flex items-center justify-between gap20 flex-grow">
-                                                            <div class="name">
-                                                                <a href="product-list.html" class="body-text">Mega
-                                                                    Pumpkin Bone</a>
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                        </ul>
+                                    <div class="box-content-search">
+                                        <ul id="box-content-search" class="search-box"></ul>
                                     </div>
                                 </form>
 
@@ -413,66 +472,67 @@
 
 
 
-                                <div class="popup-wrap user type-header">
-                                    <div class="dropdown">
-                                        <button class="btn btn-secondary dropdown-toggle" type="button"
-                                            id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <span class="header-user wg-user">
-                                                <span class="image">
-                                                    <img src="{{ 'https://api.dicebear.com/9.x/initials/svg?seed=' . \Illuminate\Support\Facades\Auth::user()->name }}" alt="{{  \Illuminate\Support\Facades\Auth::user()->name }}">
-                                                </span>
-                                                <span class="flex flex-column">
-                                                    <span class="body-title mb-2">{{  \Illuminate\Support\Facades\Auth::user()->name }}</span>
-                                                    <span class="text-tiny">Admin</span>
-                                                </span>
-                                            </span>
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-end has-content"
-                                            aria-labelledby="dropdownMenuButton3">
-                                            <li>
-                                                <a href="#" class="user-item">
-                                                    <div class="icon">
-                                                        <i class="icon-user"></i>
-                                                    </div>
-                                                    <div class="body-title-2">Account</div>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="#" class="user-item">
-                                                    <div class="icon">
-                                                        <i class="icon-mail"></i>
-                                                    </div>
-                                                    <div class="body-title-2">Inbox</div>
-                                                    <div class="number">27</div>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="#" class="user-item">
-                                                    <div class="icon">
-                                                        <i class="icon-file-text"></i>
-                                                    </div>
-                                                    <div class="body-title-2">Taskboard</div>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="#" class="user-item">
-                                                    <div class="icon">
-                                                        <i class="icon-headphones"></i>
-                                                    </div>
-                                                    <div class="body-title-2">Support</div>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="login.html" class="user-item">
-                                                    <div class="icon">
-                                                        <i class="icon-log-out"></i>
-                                                    </div>
-                                                    <div class="body-title-2">Log out</div>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
+                              <!-- Dropdown wrapper -->
+<div class="popup-wrap user type-header">
+    <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button"
+            id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-expanded="false">
+            <span class="header-user wg-user">
+                <span class="image">
+                    <img src="{{ auth()->user()->image ? asset('uploads/profile/' . auth()->user()->image) : 'https://api.dicebear.com/9.x/initials/svg?seed=' . urlencode(auth()->user()->name) }}"
+                        alt="{{ auth()->user()->name }}"
+                        class="border"
+                        style="width: 48px; height: 48px; object-fit: cover; border-radius: 100%;">
+                </span>
+                <span class="flex flex-column">
+                    <span class="body-title mb-2">{{ auth()->user()->name }}</span>
+                    <span class="text-tiny">Admin</span>
+                </span>
+            </span>
+        </button>
+
+        <ul class="dropdown-menu dropdown-menu-end has-content" aria-labelledby="dropdownMenuButton3">
+            <li>
+                <div class="user-item">
+                    <div class="icon"><i class="icon-user"></i></div>
+                    <div class="body-title-2">
+                        <form action="{{ route('admin.profile') }}" method="GET">
+                            @csrf
+                            <button type="submit" style="background:none; border:none; padding:0; cursor:pointer;">
+                                Profile
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="user-item">
+                    <div class="icon"><i class="icon-log-out"></i></div>
+                    <div class="body-title-2">Log out</div>
+                </a>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+    @csrf
+</form>
+
+
+            </li>
+        </ul>
+    </div>
+</div>
+
+<!-- JS scripts at the bottom of body -->
+<script src="{{ asset('js/jquery.min.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Optional: manually initialize all dropdowns to avoid conflicts
+        var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'))
+        var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
+            return new bootstrap.Dropdown(dropdownToggleEl)
+        })
+    });
+</script>
+
 
                             </div>
                         </div>
@@ -480,6 +540,24 @@
                     <div class="main-content">
                         @yield('content')
 
+                          {{-- Success Session msg --}}
+    @if (session('success'))
+        <div class="toast-wrapper">
+            <div id="appToast" class="app-toast success">
+                <div class="toast-icon">✓</div>
+
+                <div class="toast-content">
+                    <strong>Success</strong>
+                    <p>{{ session('success') }}</p>
+                </div>
+
+                <span class="toast-close">&times;</span>
+
+                {{-- progress bar --}}
+                <div class="toast-progress"></div>
+            </div>
+        </div>
+    @endif
 
 
                         <div class="bottom-page">
@@ -491,13 +569,73 @@
             </div>
         </div>
     </div>
-     @include('sweetalert2::index')
+    @include('sweetalert2::index')
     <script src="{{ asset('js/jquery.min.js') }}"></script>
-    <script src="{{ asset('js/bootstrap.min.js') }}"></script>
+    {{-- <script src="{{ asset('js/bootstrap.min.js') }}"></script> --}}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ asset('js/bootstrap-select.min.js') }}"></script>
     <script src="{{ asset('js/sweetalert.min.js') }}"></script>
     <script src="{{ asset('js/apexcharts/apexcharts.js') }}"></script>
     <script src="{{ asset('js/main.js') }}"></script>
+
+    {{-- SEARCH METHOD SCRIPT --}}
+    <script>
+        const input = document.getElementById('search-input');
+        const resultBox = document.getElementById('box-content-search');
+
+        input.addEventListener('keyup', async function() {
+            const query = this.value.trim();
+
+            if (query.length < 1) {
+                resultBox.innerHTML = '';
+                return;
+            }
+
+            try {
+                const response = await fetch(`{{ route('admin.search') }}?search=${query}`);
+                const data = await response.json();
+
+                resultBox.innerHTML = '';
+
+                data.forEach(product => {
+                    let url = "{{ route('admin.product.edit', ['id' => '__slug__']) }}";
+                    url = url.replace('__slug__', product.id);
+
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                <a href="${url}" class="search-item">
+                    ${product.name}
+                </a>
+            `;
+                    resultBox.appendChild(li);
+                });
+
+            } catch (error) {
+                console.error('Search error:', error);
+            }
+        });
+    </script>
+
+     {{-- Bootstrap JS --}}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    {{-- Toast trigger --}}
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const toast = document.getElementById('appToast');
+            if (!toast) return;
+
+            const closeBtn = toast.querySelector('.toast-close');
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(40px)';
+                setTimeout(() => toast.remove(), 400);
+            }, 3000);
+
+            closeBtn.addEventListener('click', () => toast.remove());
+        });
+    </script>
 
     @stack('scripts')
 </body>

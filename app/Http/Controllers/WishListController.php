@@ -44,4 +44,12 @@ class WishListController extends Controller
         Cart::instance('cart')->add($item->id,$item->name,$item->qty,$item->price)->associate(\App\Models\Product::class);
         return redirect()->back();
     }
+
+
+    // USER WISHLIST SHOW METHOD
+    public function userWishlist()
+    {
+        $items = Cart::instance('wishlist')->content();
+        return view('user.wishlist', compact('items'));
+    }
 }

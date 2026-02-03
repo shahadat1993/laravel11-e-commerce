@@ -2,16 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\OrderItem;
-use App\Models\Transaction;
+
+use App\Mail\OrderPlacedMail;
 use Carbon\Carbon;
 use App\Models\Order;
 use App\Models\Address;
 use App\Models\Coupons;
 use App\Models\Product;
+use App\Models\OrderItem;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use SweetAlert2\Laravel\Swal;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Surfsidemedia\Shoppingcart\Facades\Cart;
 
@@ -282,13 +285,18 @@ class CartController extends Controller
             $transaction->save();
         }
 
+        // ✅ EMAIL SEND
+       Mail::to(Auth::user()->email)->send(new OrderPlacedMail($order));
+
+
+
 
 
         Cart::instance('cart')->destroy();
         Session::forget('checkout');
         Session::forget('coupon');
         Session::forget('discounts');
-        Session::put('order_id',$order->id);
+        Session::put('order_id', $order->id);
         Swal::fire([
             'title' => 'CodeNest Agency',
             'text' => 'Order placed successfully!',
@@ -327,26 +335,25 @@ class CartController extends Controller
     }
 
     // ORDER CONFIRMATION
-   public function order_confirmation()
-{
-    if(Session::has('order_id')){
-        
-        $order_id = Session::get('order_id');
+    public function order_confirmation()
+    {
+        if (Session::has('order_id')) {
 
-        $order = Order::with(['orderItems.product', 'transaction'])
-            ->find($order_id);
+            $order_id = Session::get('order_id');
 
-        return view('order-confirmation', compact('order'));
+            $order = Order::with(['orderItems.product', 'transaction'])
+                ->find($order_id);
+
+            return view('order-confirmation', compact('order'));
+        }
+
+        Swal::fire([
+            'title' => 'CodeNest Agency',
+            'text' => 'Something went wrong!',
+            'icon' => 'error',
+            'confirmButtonText' => 'ok'
+        ]);
+
+        return redirect()->route('cart');
     }
-
-    Swal::fire([
-        'title' => 'CodeNest Agency',
-        'text' => 'Something went wrong!',
-        'icon' => 'error',
-        'confirmButtonText' => 'ok'
-    ]);
-
-    return redirect()->route('cart');
-}
-
 }

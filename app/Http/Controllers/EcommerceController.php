@@ -41,4 +41,19 @@ class EcommerceController extends Controller
 
         return back()->with('success', 'Your message has been sent successfully.');
     }
+
+    // SEARCH METHOD
+    public function search(Request $request)
+    {
+        $search = $request->search;
+
+        return Product::where('name', 'like', "%{$search}%")
+            ->select('name', 'slug')
+            ->limit(10)
+            ->get();
+    }
+
+
+
+    
 }

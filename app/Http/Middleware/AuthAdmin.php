@@ -17,17 +17,18 @@ class AuthAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(Auth::check()){
-            if(Auth::user()->uType == 'ADM'){
-
+        // যদি login করা থাকে
+        if (Auth::check()) {
+            // যদি admin হয়
+            if (Auth::user()->uType === 'ADM') {
                 return $next($request);
-            }else{
-                Session::flush();
-                Auth::logout();
-                return redirect()->route('login');
             }
+
+            // login আছে কিন্তু admin না
+            abort(403, 'Unauthorized access');
         }
 
-    return redirect()->route('login');
+        // login নেই
+        return redirect()->route('login');
     }
 }

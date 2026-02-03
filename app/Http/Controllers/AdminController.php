@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\Brand;
-use App\Models\Contact;
 use App\Models\Order;
 use App\Models\Slide;
+use App\Models\Contact;
 use App\Models\Coupons;
+use App\Models\Product;
 use App\Models\OrderItem;
 use App\Models\Transaction;
 use Illuminate\Support\Str;
@@ -71,25 +72,25 @@ class AdminController extends Controller
             ) D ON D.MonthNo = M.id
             ORDER BY M.id
         ");
-            $amountM = collect($monthlyDatas)
-    ->pluck('TotalAmount')
-    ->map(fn($v) => floatval($v))
-    ->toArray();
+        $amountM = collect($monthlyDatas)
+            ->pluck('TotalAmount')
+            ->map(fn($v) => floatval($v))
+            ->toArray();
 
-$orderedAmountM = collect($monthlyDatas)
-    ->pluck('TotalOrderedAmount')
-    ->map(fn($v) => floatval($v))
-    ->toArray();
+        $orderedAmountM = collect($monthlyDatas)
+            ->pluck('TotalOrderedAmount')
+            ->map(fn($v) => floatval($v))
+            ->toArray();
 
-$deliveredAmountM = collect($monthlyDatas)
-    ->pluck('TotalDeliveredAmount')
-    ->map(fn($v) => floatval($v))
-    ->toArray();
+        $deliveredAmountM = collect($monthlyDatas)
+            ->pluck('TotalDeliveredAmount')
+            ->map(fn($v) => floatval($v))
+            ->toArray();
 
-$canceledAmountM = collect($monthlyDatas)
-    ->pluck('TotalCanceledAmount')
-    ->map(fn($v) => floatval($v))
-    ->toArray();
+        $canceledAmountM = collect($monthlyDatas)
+            ->pluck('TotalCanceledAmount')
+            ->map(fn($v) => floatval($v))
+            ->toArray();
 
 
 
@@ -123,14 +124,16 @@ $canceledAmountM = collect($monthlyDatas)
 
 
     // BRANDS METHOD
-    public function brands(){
-        $brands=Brand::orderBy('id','DESC')->paginate(5);
-        return view('admin.brands',compact('brands'));
+    public function brands()
+    {
+        $brands = Brand::orderBy('id', 'DESC')->paginate(5);
+        return view('admin.brands', compact('brands'));
     }
 
     // ADD BRAND
 
-    public function addBrand(){
+    public function addBrand()
+    {
         return view('admin.add-brand');
     }
     // STORE BRAND
@@ -367,7 +370,7 @@ $canceledAmountM = collect($monthlyDatas)
     {
         $order = Order::find($request->order_id);
         $order->status = $request->order_status;
-        if ($request->order_status = 'delivered') {
+        if ($request->order_status == 'delivered') {
             $order->delivered_date = Carbon::now();
         } else if ($request->order_status == 'canceled') {
             $order->canceled_date = Carbon::now();
@@ -527,13 +530,15 @@ $canceledAmountM = collect($monthlyDatas)
     }
 
     // Contact Method
-    public function contacts(){
-        $contacts = Contact::orderBy('created_at','DESC')->paginate(10);
-        return view('admin.contact',compact('contacts'));
+    public function contacts()
+    {
+        $contacts = Contact::orderBy('created_at', 'DESC')->paginate(10);
+        return view('admin.contact', compact('contacts'));
     }
 
     // Admin Contact Delete method
-    public function delete_contact($id){
+    public function delete_contact($id)
+    {
         $contact = Contact::find($id);
         $contact->delete();
         return response()->json([
@@ -541,4 +546,54 @@ $canceledAmountM = collect($monthlyDatas)
             'message' => 'Message deleted successfully!'
         ]);
     }
+
+
+    // SEARCH METHOD
+    public function search(Request $request)
+    {
+        $search = $request->search;
+
+        return Product::where('name', 'like', "%{$search}%")
+            ->select('name', 'id')
+            ->limit(10)
+            ->get();
+    }
+
+    // ADMIN PROFILE  METHOD
+    public function profile()
+    {
+        return view('admin.profile');
+    }
+
+
+    // Route for Order tracking
+    public function track_order()
+    {
+        return view('admin.order-tracking');
+    }
+
+
+    // Transaction status update
+    public function updateTransactionStatus(Request $request)
+{
+    $request->validate([
+        'order_id' => 'required|exists:orders,id',
+        'transaction_status' => 'required|string|in:pending,approved,refunded'
+    ]);
+
+    $transaction = Transaction::where('order_id', $request->order_id)->first();
+
+    if (!$transaction) {
+        return redirect()->back()->with('error', 'Transaction not found for this order.');
+    }
+
+    // Admin selected value থেকে update করা
+    $transaction->status = $request->transaction_status;
+    $transaction->save();
+
+    return redirect()->route('admin.orders.details', $request->order_id)
+        ->with('success', 'Transaction status updated successfully!');
 }
+
+}
+

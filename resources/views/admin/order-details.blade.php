@@ -36,19 +36,19 @@
                         <thead>
                             <tr>
                                 <th>Order No</th>
-                                <td>{{$order->id}}</td>
+                                <td>{{ $order->id }}</td>
                                 <th>Mobile</th>
-                                <td>{{$order->phone}}</td>
+                                <td>{{ $order->phone }}</td>
                                 <th>Zip Code</th>
-                                <td>{{$order->zip}}</td>
+                                <td>{{ $order->zip }}</td>
                             </tr>
                             <tr>
                                 <th>Order Date</th>
-                                <td>{{$order->created_at}}</td>
+                                <td>{{ $order->created_at }}</td>
                                 <th>Delivery Date</th>
-                                <td>{{$order->delivered_date}}</td>
+                                <td>{{ $order->delivered_date }}</td>
                                 <th>Canceled Date</th>
-                                <td>{{$order->canceled_date}}</td>
+                                <td>{{ $order->canceled_date }}</td>
                             </tr>
                             <tr>
                                 <th>Order Status</th>
@@ -89,36 +89,37 @@
                                 <th class="text-center">Brand</th>
                                 <th class="text-center">Options</th>
                                 <th class="text-center">Return Status</th>
-                                <th class="text-center">Action</th>
+                                <th class="text-center">Invoice</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 @foreach ($orderItems as $item)
-                                <td class="pname">
-                                    <div class="image">
-                                        <img src="{{ asset('uploads/products').'/'.$item->product->image }}" alt="{{ $item->product->name }}" class="image">
-                                    </div>
-                                    <div class="name">
-                                        <a href="{{ route('shop.details', $item->product->slug) }}" target="_blank" class="body-title-2">{{ $item->product->name }}</a>
-                                    </div>
-                                </td>
-                                <td class="text-center">${{ $item->price }}</td>
-                                <td class="text-center">{{ $item->quantity }}</td>
-                                <td class="text-center">{{ $item->product->sku }}</td>
-                                <td class="text-center">{{ $item->product->category->name }}</td>
-                                <td class="text-center">{{ $item->product->brand->name }}</td>
-                                <td class="text-center">{{ $item->options }}</td>
-                                <td class="text-center">{{ $item->rstatus == 0 ? 'NO' : 'YES' }}</td>
-                                <td class="text-center">
-                                    <div class="list-icon-function view-icon">
-                                        <div class="item eye">
-                                            <i class="icon-eye"></i>
+                                    <td class="pname">
+                                        <div class="image">
+                                            <img src="{{ asset('uploads/products') . '/' . $item->product->image }}"
+                                                alt="{{ $item->product->name }}" class="image">
                                         </div>
-                                    </div>
-                                </td>
+                                        <div class="name">
+                                            <a href="{{ route('shop.details', $item->product->slug) }}" target="_blank"
+                                                class="body-title-2">{{ $item->product->name }}</a>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">${{ $item->price }}</td>
+                                    <td class="text-center">{{ $item->quantity }}</td>
+                                    <td class="text-center">{{ $item->product->sku }}</td>
+                                    <td class="text-center">{{ $item->product->category->name }}</td>
+                                    <td class="text-center">{{ $item->product->brand->name }}</td>
+                                    <td class="text-center">{{ $item->options }}</td>
+                                    <td class="text-center">{{ $item->rstatus == 0 ? 'NO' : 'YES' }}</td>
+                                    <td class="text-center">
+                                        <a href="{{ route('invoice.download', $order->id) }}" class="badge badge-primary "
+                                            style="color: blue">
+                                            Download
+                                        </a>
+                                    </td>
                             </tr>
-                                @endforeach
+                            @endforeach
 
 
                         </tbody>
@@ -137,12 +138,12 @@
                     <div class="my-account__address-item__detail">
                         <p>{{ $order->name }}</p>
                         <p>{{ $order->address }}</p>
-                        <p>{{$order->locality}}</p>
+                        <p>{{ $order->locality }}</p>
                         <p>{{ $order->city }},{{ $order->country }} </p>
-                        <p>{{$order->landmark}}</p>
-                        <p>{{$order->zip}}</p>
+                        <p>{{ $order->landmark }}</p>
+                        <p>{{ $order->zip }}</p>
                         <br>
-                        <p>Mobile : {{$order->phone}}</p>
+                        <p>Mobile : {{ $order->phone }}</p>
                     </div>
                 </div>
             </div>
@@ -157,56 +158,101 @@
                             <th>Tax</th>
                             <td>{{ $order->tax }}</td>
                             <th>Discount</th>
-                            <td>{{$order->discount}}</td>
+                            <td>{{ $order->discount }}</td>
                         </tr>
                         <tr>
                             <th>Total</th>
-                            <td>{{$order->total}}</td>
+                            <td>{{ $order->total }}</td>
                             <th>Payment Mode</th>
                             <td>{{ $transactions->mode }}</td>
                             <th>Status</th>
                             <td>
                                 @if ($transactions->status == 'approved')
-                                   <span class="badge bg-success">Approved</span>
-                                @elseif($transactions->status == 'declined')   
-                                   <span class="badge bg-danger">Declined</span>
-                                @elseif($transactions->status == 'refunded')   
-                                   <span class="badge bg-secondary">Refunded</span>
-                                @else  
-                                   <span class="badge bg-warning">Pending</span>
-
+                                    <span class="badge bg-success">Approved</span>
+                                @elseif($transactions->status == 'declined')
+                                    <span class="badge bg-danger">Declined</span>
+                                @elseif($transactions->status == 'refunded')
+                                    <span class="badge bg-secondary">Refunded</span>
+                                @else
+                                    <span class="badge bg-warning">Pending</span>
                                 @endif
-                                </td>
+                            </td>
                         </tr>
-                        
+
                     </tbody>
                 </table>
             </div>
 
-            <div class="wg-box mt-5">
-                <h5>Update Order Status</h5>
+
+            <div class="wg-box mt-5 flex-wrap gap-4"">
+            {{-- Order status update --}}
+
+                <div class="order_status">
+                    <h5>Update Order Status</h5>
                 <form action="{{ route('admin.orders.status.update') }}" method="POST">
                     @csrf
                     @method('PUT')
                     <div class="row">
-                       <div class="col-3">
-                         <input type="hidden" name="order_id" value="{{ $order->id }}">
-                    <div class="mb-3">
-                        <label for="order_status" class="form-label">Update Order Status</label>
-                       <div class="select">
-                         <select name="order_status" id="order_status" class="p-3">
-                            <option value="ordered" {{ $order->status == 'ordered' ? 'selected' : '' }}>Ordered</option>
-                            <option value="delivered" {{ $order->status == 'delivered' ? 'selected' : '' }}>Delivered</option>
-                            <option value="canceled" {{ $order->status == 'canceled' ? 'selected' : '' }}>Canceled</option>
-                        </select>
-                       </div>
+                        <div class="col-3">
+                            <input type="hidden" name="order_id" value="{{ $order->id }}">
+                            <div class="mb-3">
+
+                                <div class="select">
+                                    <select name="order_status" id="order_status" class="p-3">
+                                        <option value="ordered" {{ $order->status == 'ordered' ? 'selected' : '' }}>Ordered
+                                        </option>
+                                        <option value="delivered" {{ $order->status == 'delivered' ? 'selected' : '' }}>
+                                            Delivered</option>
+                                        <option value="canceled" {{ $order->status == 'canceled' ? 'selected' : '' }}>
+                                            Canceled</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <button type="submit" class="tf-button style-1 mt-3">Update Status</button>
+                        </div>
                     </div>
-                       </div>
-                    <div class="col-3">
-                        <button type="submit" class="tf-button style-1 mt-3">Update Status</button>
+                </form>
+                </div>
+            {{-- Transaction status update --}}
+
+                <div class="transaction_status">
+                    <h5>Update Transaction Status</h5>
+                <form action="{{ route('admin.transaction.status.update') }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="row">
+                        <div class="col-3">
+                            <input type="hidden" name="order_id" value="{{ $order->id }}">
+                            <div class="mb-3">
+                                <div class="select">
+                                    <select name="transaction_status" id="transaction_status" class="p-3">
+                                        <option value="pending"
+                                            {{ $order->transaction->status == 'pending' ? 'selected' : '' }}>Pending
+                                        </option>
+                                        <option value="approved"
+                                            {{ $order->transaction->status == 'approved' ? 'selected' : '' }}>Approved
+                                        </option>
+                                        <option value="refunded"
+                                            {{ $order->transaction->status == 'refunded' ? 'selected' : '' }}>Refunded
+                                        </option>
+                                    </select>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <button type="submit" class="tf-button style-1 mt-3">Update Status</button>
+                        </div>
                     </div>
-                    </div>
+                </form>
+                </div>
+
             </div>
+
+
+
         </div>
     </div>
 @endsection

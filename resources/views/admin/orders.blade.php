@@ -72,7 +72,7 @@
                                             @endif
                                         </td>
                                         <td class="text-center">{{ $order->created_at }}</td>
-                                        <td class="text-center">2{{ $order->orderItems->count() }}</td>
+                                        <td class="text-center">{{ $order->orderItems->count() }}</td>
                                         <td class="text-center">{{ $order->delivered_date }}</td>
                                         <td class="text-center">
                                             <a href="{{ route('admin.orders.details', $order->id) }}">

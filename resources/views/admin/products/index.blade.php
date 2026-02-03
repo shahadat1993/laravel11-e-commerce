@@ -27,7 +27,7 @@
                     <div class="wg-filter flex-grow">
                         <form class="form-search">
                             <fieldset class="name">
-                                <input type="text" placeholder="Search here..." name="name" value="">
+                                <input type="text" id="search-input" placeholder="Search here..." name="name" value="">
                             </fieldset>
                             <div class="button-submit">
                                 <button type="submit"><i class="icon-search"></i></button>
@@ -58,7 +58,7 @@
                                     <th class="text-center">Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="product-table-body">
                                 @foreach ($products as $key => $product)
                                     <tr>
                                         <td class="text-center">{{ $products->firstItem() + $key }}</td>
@@ -91,10 +91,7 @@
                                         <td class="text-center">{{ $product->quantity }}</td>
                                         <td class="text-center">
                                             <div class="d-flex justify-content-center align-items-center gap-3">
-                                                <!-- View Button -->
-                                                <a href="#" target="_blank" class="text-primary">
-                                                    <i class="ri-eye-fill" style="font-size: 20px"></i>
-                                                </a>
+
 
                                                 <!-- Edit Button -->
                                                 <a href="{{route('admin.product.edit',$product->id)}}" class="text-success">
@@ -121,7 +118,7 @@
                     </div>
 
                     <div class="divider"></div>
-                    <div class="d-flex align-items-center justify-content-center">
+                    <div id="pagination-container" class="d-flex align-items-center justify-content-center">
                         {{ $products->links('pagination::bootstrap-5') }}
                     </div>
                 </div>
@@ -179,4 +176,7 @@
             });
         });
     </script>
+    {{-- ADMIN PRODUCT SEARCH METHOD --}}
+
+
 @endpush

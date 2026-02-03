@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('mobile')->nullable();
+            $table->string('image')->nullable(); // এখানে যোগ করে রাখুন
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('uType')->default('USR')->comment('USR=Normal User or Customer, ADM=Admin User');

@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WishListController;
@@ -41,6 +42,22 @@ Route::post('/place-an-order',[CartController::class,'place_an_order'])->name('c
 Route::get('/order-confirmation',[CartController::class,'order_confirmation'])->name('cart.order-confirmation');
 
 
+
+// USER ACCOUNT DETAILS
+Route::middleware('auth')->group(function () {
+    Route::get('/user/account-details', [UserController::class, 'account_details'])->name('user.account.details');
+});
+
+
+// USER ADDRESS
+Route::middleware('auth')->group(function () {
+    Route::get('/user/address', [UserController::class, 'address'])->name('user.address');
+    Route::get('/user/address/add', [UserController::class, 'user_add_address'])->name('user.address.add');
+    Route::post('/user/address/store', [UserController::class, 'store_address'])->name('user.address.store');
+     Route::post('/user/address/default/{id}', [UserController::class, 'setDefault'])->name('user.address.default');
+
+});
+
 // CONTACT-US
 Route::middleware('auth')->group(function () {
     Route::get('/contact-us',[EcommerceController::class, 'contact'])->name('home.contact');
@@ -60,6 +77,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
    Route::post('/account-order/order-cancel', [UserController::class, 'order_cancel'])->name('user.orders.cancel');
 
 });
+
+// ROUTE SEARCH METHOD
+Route::get('/search',[EcommerceController::class, 'search'])->name('product.search');
 
 // FRONTEND
 
@@ -131,6 +151,20 @@ Route::middleware(['auth', 'verified', AuthAdmin::class])->group(function () {
     Route::get('/admin/orders',[AdminController::class, 'orders'])->name('admin.orders');
     Route::get('/admin/order/{order_id}/details',[AdminController::class, 'orderDetails'])->name('admin.orders.details');
     Route::put('/admin/order/update-status',[AdminController::class, 'update_order_status'])->name('admin.orders.status.update');
+
+    // Transaction update route
+    Route::put('/transaction/status', [AdminController::class, 'updateTransactionStatus'])
+        ->name('admin.transaction.status.update');
+
+
+    // Route for Order tracking
+    Route::get('/admin/order/track-order',[AdminController::class, 'track_order'])->name('admin.order.track');
+
+    // Transaction status update Route
+    Route::put('/admin/transaction/status', [AdminController::class, 'updateTransactionStatus'])
+    ->name('admin.transaction.status.update')
+    ->middleware('auth:admin');
+
 });
 
 // Wishlist Routes
@@ -139,6 +173,9 @@ Route::get('/wishlist', [WishListController::class, 'index'])->name('wishlist.in
 Route::delete('/wishlist/item/remove/{rowId}', [WishListController::class, 'remove_wishlist'])->name('wishlist.item.remove');
 Route::delete('/wishlist/clear', [WishListController::class, 'empty_wishlist'])->name('wishlist.destroy');
 Route::post('/wishlist/move-to-cart/{rowId}', [WishListController::class, 'move_to_cart'])->name('wishlist.move.to.cart');
+
+// USER WISHLIST ROUTE
+Route::get('/user/wishlist', [WishListController::class, 'userWishlist'])->name('user.wishlist');
 require __DIR__.'/auth.php';
 
 
@@ -147,3 +184,35 @@ Route::middleware(['auth', 'verified', AuthAdmin::class])->group(function () {
     Route::get('/admin/contact', [AdminController::class, 'contacts'])->name('admin.contact.index');
     Route::delete('/admin/contact/delete/{id}', [AdminController::class, 'delete_contact'])->name('admin.contact.destroy');
 });
+
+// BACKEND SEARCH ROUTE
+Route::middleware(['auth', 'verified', AuthAdmin::class])->group(function () {
+    // admin search route
+    Route::get('/admin/search', [AdminController::class, 'search'])->name('admin.search');
+    // admin product search route
+    Route::get('/admin/products/search', [AdminController::class, 'searchProduct'])->name('admin.product.search');
+});
+// BACKEND Profile ROUTE
+Route::middleware(['auth', 'verified', AuthAdmin::class])->group(function () {
+    // admin profile route
+    Route::get('/admin/profile', [AdminController::class, 'profile'])->name('admin.profile');
+    Route::put('/admin/profile/update', [ProfileController::class, 'update'])->name('admin.profile.update');
+
+    // admin profile show route
+    Route::get('/admin/profile/show', [UserController::class, 'users'])->name('admin.profile.show');
+
+
+    // Admin user profile delete route
+    Route::delete('/admin/user/delete/{id}', [UserController::class, 'delete_user'])->name('admin.user.delete');
+
+    // User oder count route
+    Route::get('/admin/user/{id}/orders', [UserController::class, 'showOrders'])->name('admin.user.orders');
+
+
+
+
+
+});
+// Route for invoice download
+    Route::get('/invoice/{order}', [InvoiceController::class, 'download'])
+    ->name('invoice.download');

@@ -141,6 +141,68 @@
                 width: 0%;
             }
         }
+
+
+        /* search style */
+        /* wrapper should be relative */
+        .search-wrapper {
+            position: relative;
+            max-width: 120px;
+        }
+
+        /* magnifying glass inside input */
+        .
+
+        /* search result box */
+        #box-content-search {
+            position: absolute;
+            top: calc(100% + 6px);
+            /* input-এর ঠিক নিচে আসবে */
+            left: 0;
+            width: 100%;
+            /* input-এর সাথে width match করবে */
+            max-width: 420px;
+            /* চাইলে adjust করো */
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 6px 0;
+            box-shadow: 0 14px 35px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            z-index: 9999;
+            max-height: 300px;
+            overflow-y: auto;
+            box-sizing: border-box;
+            font-family: sans-serif;
+        }
+
+        /* each list item */
+        #box-content-search li {
+            list-style: none;
+        }
+
+        /* links inside search results */
+        #box-content-search a {
+            display: block;
+            padding: 10px 18px;
+            font-size: 14.5px;
+            color: #222;
+            text-decoration: none;
+            transition: background 0.15s ease, padding-left 0.15s ease;
+        }
+
+        /* hover effect */
+        #box-content-search a:hover {
+            background: #f3f6ff;
+            padding-left: 24px;
+            color: #2b59ff;
+        }
+
+        /* optional: empty message */
+        #box-content-search .search-empty {
+            padding: 10px 18px;
+            font-size: 14px;
+            color: #777;
+        }
     </style>
 </head>
 
@@ -547,7 +609,8 @@
                                 <p class="text-uppercase text-secondary fw-medium mb-4">What are you looking for?</p>
                                 <div class="position-relative">
                                     <input class="search-field__input search-popup__input w-100 fw-medium"
-                                        type="text" name="search-keyword" placeholder="Search products" />
+                                        type="text" name="search-keyword" id="search-input"
+                                        placeholder="Search products" />
                                     <button class="btn-icon search-popup__submit" type="submit">
                                         <svg class="d-block" width="20" height="20" viewBox="0 0 20 20"
                                             fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -558,25 +621,7 @@
                                 </div>
 
                                 <div class="search-popup__results">
-                                    <div class="sub-menu search-suggestion">
-                                        <h6 class="sub-menu__title fs-base">Quicklinks</h6>
-                                        <ul class="sub-menu__list list-unstyled">
-                                            <li class="sub-menu__item"><a href="shop2.html"
-                                                    class="menu-link menu-link_us-s">New Arrivals</a>
-                                            </li>
-                                            <li class="sub-menu__item"><a href="#"
-                                                    class="menu-link menu-link_us-s">Dresses</a></li>
-                                            <li class="sub-menu__item"><a href="shop3.html"
-                                                    class="menu-link menu-link_us-s">Accessories</a>
-                                            </li>
-                                            <li class="sub-menu__item"><a href="#"
-                                                    class="menu-link menu-link_us-s">Footwear</a></li>
-                                            <li class="sub-menu__item"><a href="#"
-                                                    class="menu-link menu-link_us-s">Sweatshirt</a></li>
-                                        </ul>
-                                    </div>
-
-                                    <div class="search-result row row-cols-5"></div>
+                                    <ul id="box-content-search" class="search-box"></ul>
                                 </div>
                             </form>
                         </div>
@@ -834,6 +879,8 @@
         </div>
     </footer>
 
+
+
     <div id="scrollTop" class="visually-hidden end-0"></div>
     <div class="page-overlay"></div>
     @include('sweetalert2::index')
@@ -842,7 +889,6 @@
     <script src="{{ asset('assets/js/plugins/bootstrap-slider.min.js') }}"></script>
     <script src="{{ asset('assets/js/plugins/swiper.min.js') }}"></script>
     <script src="{{ asset('assets/js/plugins/countdown.js') }}"></script>
-    <script src="{{ asset('assets/js/theme.js') }}"></script>
 
     {{-- Bootstrap JS --}}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -865,6 +911,41 @@
         });
     </script>
 
+    <script>
+        const input = document.getElementById('search-input');
+        const resultBox = document.getElementById('box-content-search');
+
+        input.addEventListener('keyup', async function() {
+            const query = this.value.trim();
+
+            if (query.length < 1) {
+                resultBox.innerHTML = '';
+                return;
+            }
+
+            try {
+                const response = await fetch(`{{ route('product.search') }}?search=${query}`);
+                const data = await response.json();
+
+                resultBox.innerHTML = '';
+
+                data.forEach(product => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                <a href="/shop/${product.slug}" class="search-item">
+                    ${product.name}
+                </a>
+            `;
+                    resultBox.appendChild(li);
+                });
+
+            } catch (error) {
+                console.error('Search error:', error);
+            }
+        });
+    </script>
+
+    <script src="{{ asset('assets/js/theme.js') }}"></script>
     @stack('scripts')
 </body>∏
 

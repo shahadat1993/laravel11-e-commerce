@@ -49,6 +49,6 @@ class RegisteredUserController extends Controller
 // dd($request->all());
 
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect(route('home', absolute: false));
     }
 }

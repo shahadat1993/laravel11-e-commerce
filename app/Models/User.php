@@ -20,8 +20,9 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
-        'mobile',
         'password',
+        'mobile', // যোগ করুন
+        'image',  // যোগ করুন
     ];
 
     /**
@@ -46,4 +47,12 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+
+    // orders relationship
+    // User.php
+public function orders() {
+    return $this->hasMany(Order::class);
+}
+
 }
