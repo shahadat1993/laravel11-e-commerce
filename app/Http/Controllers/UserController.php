@@ -43,7 +43,7 @@ class UserController extends Controller
 
     // ORDER CANCEL METHOD
     public function order_cancel(Request $request)
-    {;
+    {
 
         $order = Order::find($request->order_id);
 
@@ -65,10 +65,7 @@ class UserController extends Controller
         $order->canceled_date = now();
         $order->save();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Order canceled successfully'
-        ]);
+        return redirect()->back()->with('success', 'Order canceled successfully');
     }
 
     // Method for User Profile
@@ -290,5 +287,12 @@ class UserController extends Controller
         $user->save();
 
         return back()->with('success', 'Account updated successfully!');
+    }
+
+
+    // About US Method
+    public function about()
+    {
+        return view('user.about');
     }
 }

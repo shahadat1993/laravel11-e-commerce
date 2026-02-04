@@ -1,241 +1,269 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta charset="UTF-8">
     <title>Invoice #{{ $order->id }}</title>
-
     <style>
+        @page {
+            margin: 0;
+        }
         body {
-            font-family: DejaVu Sans, Arial, sans-serif;
-            font-size: 12px;
-            color: #333;
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            font-size: 13px;
+            color: #444;
             line-height: 1.5;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .invoice-wrapper {
+            max-width: 800px;
+            margin: 20px auto;
+            background: #fff;
+            padding: 50px; /* পর্যাপ্ত প্যাডিং দেওয়া হয়েছে যাতে ডান পাশে লেগে না থাকে */
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
         }
 
-        .container {
+        /* প্রফেশনাল হেডার ডিজাইন */
+        .header-table {
             width: 100%;
-            padding: 25px;
-        }
-
-        .header {
-            width: 100%;
+            border-bottom: 2px solid #1a237e;
+            padding-bottom: 20px;
             margin-bottom: 30px;
         }
-
-        .company {
-            width: 50%;
-            float: left;
-        }
-
-        .company h2 {
+        .company-info h1 {
             margin: 0;
-            color: #2c7be5;
+            color: #1a237e;
+            font-size: 26px;
+            text-transform: uppercase;
         }
-
-        .invoice-info {
-            width: 50%;
-            float: right;
+        .company-info p {
+            margin: 2px 0;
+            font-size: 12px;
+            color: #666;
+        }
+        .invoice-meta {
             text-align: right;
         }
-
-        .clear {
-            clear: both;
+        .invoice-meta h2 {
+            margin: 0;
+            color: #1a237e;
+            font-size: 32px;
+            letter-spacing: 2px;
         }
 
-        .section {
-            margin-bottom: 25px;
+        /* বিলিং সেকশন */
+        .billing-grid {
+            width: 100%;
+            margin-bottom: 40px;
         }
-
-        .section-title {
+        .billing-title {
+            font-size: 11px;
+            text-transform: uppercase;
             font-weight: bold;
+            color: #1a237e;
             border-bottom: 1px solid #ddd;
             margin-bottom: 10px;
             padding-bottom: 5px;
         }
+        .billing-content {
+            font-size: 13px;
+        }
 
-        table {
+        /* মডার্ন টেবিল স্টাইল */
+        .items-table {
             width: 100%;
             border-collapse: collapse;
+            margin-bottom: 30px;
         }
-
-        table th {
-            background: #f2f4f6;
-            border: 1px solid #ddd;
-            padding: 8px;
+        .items-table thead th {
+            background-color: #f8f9fa;
+            color: #1a237e;
+            padding: 15px 10px;
+            text-align: left;
+            border-bottom: 2px solid #1a237e;
             font-weight: bold;
+            font-size: 12px;
+        }
+        .items-table tbody td {
+            padding: 15px 10px;
+            border-bottom: 1px solid #eee;
+            vertical-align: middle;
+        }
+        .product-img {
+            border-radius: 4px;
+            object-fit: cover;
+            border: 1px solid #eee;
         }
 
-        table td {
-            border: 1px solid #ddd;
-            padding: 8px;
+        /* টোটাল ক্যালকুলেশন এরিয়া */
+        .summary-wrapper {
+            width: 100%;
+            margin-top: 20px;
         }
-
-        .text-right {
-            text-align: right;
+        .notes-box {
+            width: 50%;
+            float: left;
+            background: #fdfdfd;
+            padding: 15px;
+            border-left: 3px solid #1a237e;
+            font-size: 11px;
         }
-
-        .text-center {
-            text-align: center;
-        }
-
-        .totals {
+        .totals-box {
             width: 40%;
             float: right;
         }
-
-        .totals td {
-            border: none;
-            padding: 5px 0;
+        .totals-table {
+            width: 100%;
+            border-collapse: collapse;
         }
-
-        .totals tr:last-child td {
+        .totals-table td {
+            padding: 8px 5px;
+            text-align: right;
+        }
+        .totals-table .label {
+            color: #666;
+            text-align: left;
+        }
+        .grand-total-row td {
+            padding-top: 15px;
+            border-top: 2px solid #1a237e;
+            font-size: 18px;
             font-weight: bold;
-            border-top: 1px solid #000;
-            padding-top: 8px;
+            color: #1a237e;
         }
 
+        .clear { clear: both; }
+
+        /* ফুটার */
         .footer {
             margin-top: 50px;
             text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: #999;
             font-size: 11px;
-            color: #777;
         }
 
-        img {
-            border-radius: 4px;
-        }
+        /* স্ট্যাটাস ব্যাজ */
+        .status-paid { color: #2e7d32; font-weight: bold; }
+        .status-pending { color: #ef6c00; font-weight: bold; }
     </style>
 </head>
-
 <body>
-    <div class="container">
 
-        <!-- HEADER -->
-        <div class="header">
-            <div class="company">
-                <h2>CodeNest Agency</h2>
-                <p>
-                    Web & Software Solutions<br>
-                    Dhaka, Bangladesh<br>
-                    support@codenest.com
-                </p>
-            </div>
+<div class="invoice-wrapper">
+    <table class="header-table">
+        <tr>
+            <td class="company-info">
+                <h1>CodeNest Agency</h1>
+                <p>Premier Web & Software Solutions</p>
+                <p>Uttara, Dhaka, Bangladesh</p>
+                <p>support@codenest.com | +880 1XXXXXXXXX</p>
+            </td>
+            <td class="invoice-meta">
+                <h2>INVOICE</h2>
+                <p style="margin:0;"><strong>#{{ $order->id }}</strong></p>
+                <p style="margin:0; color:#666;">Date: {{ $order->created_at->format('d M, Y') }}</p>
+            </td>
+        </tr>
+    </table>
 
-            <div class="invoice-info">
-                <h3>INVOICE</h3>
-                <p>
-                    Invoice #: {{ $order->id }}<br>
-                    Date: {{ $order->created_at->format('d M Y') }}<br>
-                    Status: {{ strtoupper($order->status) }}
-                </p>
-            </div>
-            <div class="clear"></div>
+    <table class="billing-grid">
+        <tr>
+            <td width="50%" style="vertical-align: top; padding-right: 20px;">
+                <div class="billing-title">Client Information</div>
+                <div class="billing-content">
+                    <strong style="font-size: 15px; color:#333;">{{ $order->name }}</strong><br>
+                    {{ $order->address }}<br>
+                    {{ $order->city }} - {{ $order->zip }}<br>
+                    Phone: {{ $order->phone }}
+                </div>
+            </td>
+            <td width="50%" style="vertical-align: top; padding-left: 20px;">
+                <div class="billing-title">Payment Details</div>
+                <div class="billing-content">
+                    <strong>Method:</strong> {{ strtoupper($order->transaction->mode ?? 'Cash') }}<br>
+                    <strong>Status:</strong>
+                    @php
+                        $status = $order->transaction->status ?? 'pending';
+                    @endphp
+                    <span class="{{ $status == 'approved' ? 'status-paid' : 'status-pending' }}">
+                        {{ strtoupper($status) }}
+                    </span>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <table class="items-table">
+        <thead>
+            <tr>
+                <th width="10%">Image</th>
+                <th width="45%">Description</th>
+                <th width="10%" style="text-align: center;">Qty</th>
+                <th width="15%" style="text-align: right;">Unit Price</th>
+                <th width="20%" style="text-align: right;">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($order->orderItems as $item)
+            <tr>
+                <td>
+                    <img src="{{ public_path('uploads/products/' . $item->product->image) }}" width="45" height="45" class="product-img">
+                </td>
+                <td>
+                    <div style="font-weight: bold; color: #333;">{{ $item->product->name }}</div>
+                    <small style="color:#888;">SKU: {{ $item->product->sku ?? 'N/A' }}</small>
+                </td>
+                <td style="text-align: center;">{{ $item->quantity }}</td>
+                <td style="text-align: right;">৳{{ number_format($item->price, 2) }}</td>
+                <td style="text-align: right; font-weight: bold; color: #1a237e;">৳{{ number_format($item->price * $item->quantity, 2) }}</td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    <div class="summary-wrapper">
+        <div class="notes-box">
+            <div style="font-weight: bold; margin-bottom: 5px; color: #1a237e;">TERMS & CONDITIONS</div>
+            <p style="margin: 0;">1. Items once sold are not returnable unless defective.</p>
+            <p style="margin: 0;">2. Warranty claims require the original invoice.</p>
+            <p style="margin: 0;">3. This is an electronically generated document.</p>
         </div>
 
-        <!-- BILLING -->
-        <div class="section">
-            <div class="section-title">Billing Information</div>
-            <table>
+        <div class="totals-box">
+            <table class="totals-table">
                 <tr>
-                    <td>
-                        <strong>{{ $order->name }}</strong><br>
-                        {{ $order->address }}<br>
-                        {{ $order->locality }}, {{ $order->city }}<br>
-                        {{ $order->state }} - {{ $order->zip }}<br>
-                        Phone: {{ $order->phone }}
-                    </td>
-                    <td>
-    <strong>Payment Method:</strong><br>
-    {{ strtoupper($order->transaction->mode ?? 'Cash On Delivery') }}<br><br>
-
-    <strong>Transaction Status:</strong><br>
-    @php
-        $status = $order->transaction->status ?? 'pending';
-        $color = '';
-        if ($status == 'approved') {
-            $color = 'green';
-        } elseif ($status == 'refunded' || $status == 'declined' || $status == 'canceled') {
-            $color = 'red';
-        } else {
-            $color = 'orange';
-        }
-    @endphp
-    <span style="color: {{ $color }}; font-weight: bold;">{{ ucfirst($status) }}</span>
-</td>
-
-
+                    <td class="label">Subtotal</td>
+                    <td>৳{{ number_format($order->subtotal, 2) }}</td>
+                </tr>
+                @if($order->tax > 0)
+                <tr>
+                    <td class="label">VAT (Tax)</td>
+                    <td>৳{{ number_format($order->tax, 2) }}</td>
+                </tr>
+                @endif
+                @if($order->discount > 0)
+                <tr>
+                    <td class="label" style="color: #c62828;">Discount (-)</td>
+                    <td style="color: #c62828;">৳{{ number_format($order->discount, 2) }}</td>
+                </tr>
+                @endif
+                <tr class="grand-total-row">
+                    <td class="label">Net Payable</td>
+                    <td>৳{{ number_format($order->total, 2) }}</td>
                 </tr>
             </table>
         </div>
-
-        <!-- ITEMS -->
-        <div class="section">
-            <div class="section-title">Order Items</div>
-
-            <table>
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Product</th>
-                        <th class="text-center">Image</th>
-                        <th class="text-center">Qty</th>
-                        <th class="text-right">Price</th>
-                        <th class="text-right">Total</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    @foreach ($order->orderItems as $index => $item)
-                        <tr>
-                            <td>{{ $index + 1 }}</td>
-                            <td>{{ $item->product->name }}</td>
-                            <td class="text-center">
-                                <img src="{{ public_path('uploads/products/' . $item->product->image) }}" width="45">
-                            </td>
-                            <td class="text-center">{{ $item->quantity }}</td>
-                            <td class="text-right">৳{{ number_format($item->price, 2) }}</td>
-                            <td class="text-right">
-                                ৳{{ number_format($item->price * $item->quantity, 2) }}
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-
-        <!-- TOTALS -->
-        <div class="section">
-            <table class="totals">
-                <tr>
-                    <td>Subtotal:</td>
-                    <td class="text-right">৳{{ number_format($order->subtotal, 2) }}</td>
-                </tr>
-                <tr>
-                    <td>Discount:</td>
-                    <td class="text-right">৳{{ number_format($order->discount, 2) }}</td>
-                </tr>
-                <tr>
-                    <td>Tax:</td>
-                    <td class="text-right">৳{{ number_format($order->tax, 2) }}</td>
-                </tr>
-                <tr>
-                    <td>Total Payable:</td>
-                    <td class="text-right">৳{{ number_format($order->total, 2) }}</td>
-                </tr>
-            </table>
-            <div class="clear"></div>
-        </div>
-
-        <!-- FOOTER -->
-        <div class="footer">
-            <p>
-                This is a system-generated invoice. No signature required.<br>
-                Thank you for shopping with <strong>CodeNest Agency</strong>.
-            </p>
-        </div>
-
+        <div class="clear"></div>
     </div>
-</body>
 
+    <div class="footer">
+        <p>Thank you for your business! If you have any questions, feel free to contact us.</p>
+        <strong>www.codenest.com</strong>
+    </div>
+</div>
+
+</body>
 </html>

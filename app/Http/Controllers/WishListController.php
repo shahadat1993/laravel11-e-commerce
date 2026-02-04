@@ -22,19 +22,19 @@ class WishListController extends Controller
             $request->price,
         )->associate(\App\Models\Product::class);
 
-        return redirect()->back();
+        return redirect()->back()->with('success','Product added to wishlist successfully!');
     }
 
     // REMOVE FROM WISHLIST METHOD
     public function remove_wishlist($rowId){
         Cart::instance('wishlist')->remove($rowId);
-        return redirect()->back();
+        return redirect()->back()->with('success','Product removed from wishlist successfully!');
     }
 
     // EMPTY WISHLIST
     public function empty_wishlist(){
         Cart::instance('wishlist')->destroy();
-        return redirect()->back();
+        return redirect()->back()->with('success','Wishlist is now empty!');
     }
 
     // MOVE_TO_CART METHOD
@@ -42,7 +42,7 @@ class WishListController extends Controller
         $item =Cart::instance('wishlist')->get($rowId);
         Cart::instance("wishlist")->remove($rowId);
         Cart::instance('cart')->add($item->id,$item->name,$item->qty,$item->price)->associate(\App\Models\Product::class);
-        return redirect()->back();
+        return redirect()->back()->with('success','Product added to cart successfully!');
     }
 
 

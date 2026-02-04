@@ -297,12 +297,12 @@ class CartController extends Controller
         Session::forget('coupon');
         Session::forget('discounts');
         Session::put('order_id', $order->id);
-        Swal::fire([
-            'title' => 'CodeNest Agency',
-            'text' => 'Order placed successfully!',
-            'icon' => 'success',
-            'confirmButtonText' => 'ok'
-        ]);
+        // Swal::fire([
+        //     'title' => 'CodeNest Agency',
+        //     'text' => 'Order placed successfully!',
+        //     'icon' => 'success',
+        //     'confirmButtonText' => 'ok'
+        // ]);
         return redirect()->route('cart.order-confirmation', compact('order'))->with('success', 'Order placed successfully!');
     }
 

@@ -311,7 +311,7 @@
                             <form id="cancelOrderForm" action="{{ route('user.orders.cancel') }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="order_id" value="{{ $order->id }}">
-                                <button type="button" id="cancelOrderBtn" class="btn btn-danger px-5"
+                                <button type="submit" id="cancelOrderBtn" class="btn btn-danger px-5"
                                     data-id="{{ $order->id }}">
                                     Cancel This Order
                                 </button>

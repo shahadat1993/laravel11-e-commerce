@@ -55,6 +55,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/account-details', [UserController::class, 'account_details'])->name('user.account.details');
     Route::post('/account-update', [UserController::class, 'account_update'])->name('user.account.update');
 });
+// USER ABOUT DETAILS
+Route::middleware('auth')->group(function () {
+    Route::get('/about', [UserController::class, 'about'])->name('user.about');
+});
 
 
 // USER ADDRESS
