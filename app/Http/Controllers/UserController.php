@@ -179,10 +179,40 @@ class UserController extends Controller
         return redirect()->back()->with('success', 'Default address updated');
     }
 
+
+    // Delete address method
+    public function destroy($id)
+    {
+        $address = Address::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->first();
+
+        if (!$address) {
+            return response()->json([
+            'success' => false,
+            'message' => 'Address not found!'
+        ]);
+        }
+
+        // default address delete করা হলে অন্যটা default করা (optional but smart)
+        if ($address->isdefault) {
+            Address::where('user_id', Auth::id())
+                ->where('id', '!=', $id)
+                ->first()?->update(['isdefault' => true]);
+        }
+
+        $address->delete();
+
+       return response()->json([
+            'success' => true,
+            'message' => 'Address deleted successfully!'
+        ]);
+    }
+
     // USER ACCOUNT DETAILS
     public function account_details()
     {
         $users = User::where('id', Auth::user()->id)->first();
-        return view('user.account_details',compact('users'));
+        return view('user.account_details', compact('users'));
     }
 }

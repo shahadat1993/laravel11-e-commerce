@@ -51,19 +51,35 @@
                                                     <i class="fa fa-check-circle text-success"></i>
                                                 @endif
                                             </h5>
+                                            <div class="btn-wrapper flex gap-4">
+                                                @if (!$address->isdefault)
+                                                    <form action="{{ route('user.address.default', $address->id) }}"
+                                                        method="POST">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-sm btn-outline-success"
+                                                            style="color: green;">
+                                                            Make Default
+                                                        </button>
+                                                    </form>
+                                                @else
+                                                    <span class="badge bg-success" style="color: green;">Default</span>
+                                                @endif
 
-                                            @if (!$address->isdefault)
-                                                <form action="{{ route('user.address.default', $address->id) }}"
-                                                    method="POST">
+
+                                                {{-- DELETE BUTTON --}}
+                                                <form action="{{ route('user.address.delete', $address->id) }}"
+                                                    method="POST" class="d-inline mt-3"
+                                                    >
                                                     @csrf
-                                                    <button type="submit" class="btn btn-sm btn-outline-success"
-                                                        style="color: green;">
-                                                        Make Default
+                                                    @method('DELETE')
+                                                    <button type="button" class="btn btn-sm btn-outline-danger delete-btn"
+                                                        data-id="{{ $address->id }}">
+                                                        Delete
                                                     </button>
+
                                                 </form>
-                                            @else
-                                                <span class="badge bg-success" style="color: green;">Default</span>
-                                            @endif
+                                            </div>
+
                                         </div>
 
                                         <div class="my-account__address-item__detail">
@@ -85,3 +101,52 @@
         </section>
     </main>
 @endsection
+@push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const token = document
+                .querySelector('meta[name="csrf-token"]')
+                ?.getAttribute('content');
+
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+
+                    const addressId = this.dataset.id;
+
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "This address will be deleted permanently!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes, delete it!',
+                        cancelButtonText: 'Cancel'
+                    }).then(result => {
+
+                        if (!result.isConfirmed) return;
+
+                        fetch(`/user/address/delete/${addressId}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'X-CSRF-TOKEN': token,
+                                    'Accept': 'application/json'
+                                }
+                            })
+                            .then(res => res.json())
+                            .then(data => {
+                                Swal.fire('Deleted!', data.message, 'success')
+                                    .then(() => location.reload());
+                            })
+                            .catch(() => {
+                                Swal.fire('Error!', 'Something went wrong!', 'error');
+                            });
+
+                    });
+                });
+            });
+
+        });
+    </script>
+@endpush
