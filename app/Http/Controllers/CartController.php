@@ -286,7 +286,7 @@ class CartController extends Controller
         }
 
         // ✅ EMAIL SEND
-       Mail::to(Auth::user()->email)->send(new OrderPlacedMail($order));
+        Mail::to(Auth::user()->email)->send(new OrderPlacedMail($order));
 
 
 
@@ -305,6 +305,56 @@ class CartController extends Controller
         ]);
         return redirect()->route('cart.order-confirmation', compact('order'))->with('success', 'Order placed successfully!');
     }
+
+
+
+    // Edit address method
+    // EDIT ADDRESS from Checkout
+    public function edit_address_checkout($id)
+    {
+        $address = Address::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        // Checkout context থাকছে
+        return view('editCheckoutAddress', compact('address'));
+    }
+
+    // UPDATE ADDRESS from Checkout
+    public function update_address_checkout(Request $request, $id)
+    {
+        $address = Address::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        $request->validate([
+            'name'      => 'required|string|max:255',
+            'phone'     => 'required|string|max:15',
+            'zip'       => 'required|string|max:10',
+            'city'      => 'required|string|max:100',
+            'state'     => 'required|string|max:100',
+            'address'   => 'required|string',
+            'locality'  => 'required|string|max:100',
+            'landmark'  => 'required|string|max:100',
+        ]);
+
+        $address->update([
+            'name'      => $request->name,
+            'phone'     => $request->phone,
+            'zip'       => $request->zip,
+            'city'      => $request->city,
+            'state'     => $request->state,
+            'address'   => $request->address,
+            'locality'  => $request->locality,
+            'landmark'  => $request->landmark,
+            'country'   => 'Bangladesh',
+        ]);
+
+        // Update করার পরে redirect করতে হবে আবার checkout এ
+        return redirect()->route('cart.checkout')
+            ->with('success', 'Address Updated Successfully!');
+    }
+
 
 
 

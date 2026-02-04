@@ -12,6 +12,7 @@ use App\Models\Transaction;
 use Illuminate\Http\Request;
 use SweetAlert2\Laravel\Swal;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -126,8 +127,8 @@ class UserController extends Controller
 
         $request->validate([
             'name'      => 'required|string|max:255',
-            'phone'     => 'required|numeric',
-            'zip'       => 'required|numeric',
+            'phone' => 'required|string|max:15',
+            'zip'   => 'required|string|max:10',
             'city'      => 'required|string|max:100',
             'state'     => 'required|string|max:100',
             'address'   => 'required|string',
@@ -154,6 +155,47 @@ class UserController extends Controller
 
         return redirect()->route('user.address')->with('success', 'Address added successfully');
     }
+
+    // Edit User Addresses
+    public function edit_address($id)
+    {
+        $address = Address::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
+        return view('user.editAddress', compact('address'));
+    }
+
+    // Update User Address
+    public function update_address(Request $request, $id)
+    {
+        $address = Address::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        $request->validate([
+            'name'      => 'required|string|max:255',
+            'phone'     => 'required|string|max:15',
+            'zip'       => 'required|string|max:10',
+            'city'      => 'required|string|max:100',
+            'state'     => 'required|string|max:100',
+            'address'   => 'required|string',
+            'locality'  => 'required|string|max:100',
+            'landmark'  => 'required|string|max:100',
+        ]);
+
+        $address->update($request->only([
+            'name',
+            'phone',
+            'zip',
+            'city',
+            'state',
+            'address',
+            'locality',
+            'landmark'
+        ]) + ['country' => 'Bangladesh']);
+
+        return redirect()->route('user.address')->with('success', 'Address Updated Successfully!');
+    }
+
+
 
     // Set default address method
     public function setDefault($id)
@@ -183,36 +225,70 @@ class UserController extends Controller
     // Delete address method
     public function destroy($id)
     {
-        $address = Address::where('id', $id)
+        $deleted = Address::where('id', $id)
             ->where('user_id', Auth::id())
-            ->first();
+            ->delete();
 
-        if (!$address) {
+        if ($deleted === 0) {
             return response()->json([
-            'success' => false,
-            'message' => 'Address not found!'
-        ]);
+                'success' => false,
+                'message' => 'Address not found or not deleted'
+            ]);
         }
 
-        // default address delete করা হলে অন্যটা default করা (optional but smart)
-        if ($address->isdefault) {
-            Address::where('user_id', Auth::id())
-                ->where('id', '!=', $id)
-                ->first()?->update(['isdefault' => true]);
-        }
-
-        $address->delete();
-
-       return response()->json([
+        return response()->json([
             'success' => true,
             'message' => 'Address deleted successfully!'
         ]);
     }
 
+
+
+
     // USER ACCOUNT DETAILS
+
     public function account_details()
     {
-        $users = User::where('id', Auth::user()->id)->first();
-        return view('user.account_details', compact('users'));
+        $user = Auth::user();
+        return view('user.account_details', compact('user'));
+    }
+
+    public function account_update(Request $request)
+    {
+        $user = Auth::user();
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'mobile' => 'required|string|max:20',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'old_password' => 'nullable|required_with:new_password',
+            'new_password' => 'nullable|min:8|confirmed',
+        ]);
+
+        // Profile Image Upload
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->extension();
+            $image->move(public_path('uploads/users'), $imageName);
+            $user->image = $imageName;
+        }
+
+        $user->name = $request->name;
+        $user->mobile = $request->mobile;
+        $user->email = $request->email;
+
+        // Password Update
+        if ($request->filled('new_password')) {
+            if (Hash::check($request->old_password, $user->password)) {
+                $user->password = Hash::make($request->new_password);
+            } else {
+                return back()->withErrors(['old_password' => 'Old password does not match!']);
+            }
+        }
+
+        $user->save();
+
+        return back()->with('success', 'Account updated successfully!');
     }
 }

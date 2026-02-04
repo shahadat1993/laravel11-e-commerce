@@ -1,99 +1,227 @@
 @extends('layouts.app')
 @section('content')
     <style>
-        .table> :not(caption)>tr>th {
-            padding: 0.625rem 1.5rem .625rem !important;
-            background-color: #6a6e51 !important;
+        .my-account {
+            padding-top: 60px;
+            padding-bottom: 100px;
+            background-color: #fcfcfc;
         }
 
-        .table>tr>td {
-            padding: 0.625rem 1.5rem .625rem !important;
+        .page-title {
+            font-size: 32px;
+            font-weight: 900;
+            color: #111;
+            margin-bottom: 40px;
+            letter-spacing: -1px;
         }
 
-        .table-bordered> :not(caption)>tr>th,
-        .table-bordered> :not(caption)>tr>td {
-            border-width: 1px 1px;
-            border-color: #6a6e51;
+        /* Premium Table Wrapper */
+        .order-table-container {
+            background: #fff;
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(0, 0, 0, 0.02);
+            padding: 15px;
+            /* কন্টেইনারের ভেতরে বাড়তি প্যাডিং */
+            overflow: hidden;
         }
 
-        .table> :not(caption)>tr>td {
-            padding: .8rem 1rem !important;
+        .table {
+            margin-bottom: 0;
+            vertical-align: middle;
+            border-collapse: separate;
+            border-spacing: 0 10px;
         }
 
-        .bg-success {
-            background-color: #40c710 !important;
+        /* Table Header */
+        .table thead th {
+            background-color: transparent !important;
+            color: #999 !important;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 1.5px;
+            padding: 20px !important;
+            border: none !important;
         }
 
-        .bg-danger {
-            background-color: #f44032 !important;
+        /* Table Rows */
+        .table tbody tr {
+            background-color: #fff;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+            border-radius: 15px;
         }
 
-        .bg-warning {
-            background-color: #f5d700 !important;
-            color: #000;
+        .table tbody td {
+            padding: 25px 20px !important;
+            /* সেলের ভেতর বেশি প্যাডিং */
+            color: #444;
+            font-size: 15px;
+            border: none;
+            background: #fff;
+        }
+
+        /* Row Hover Effect */
+        .table tbody tr:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            z-index: 1;
+        }
+
+        .table tbody tr td:first-child {
+            border-top-left-radius: 15px;
+            border-bottom-left-radius: 15px;
+        }
+
+        .table tbody tr td:last-child {
+            border-top-right-radius: 15px;
+            border-bottom-right-radius: 15px;
+        }
+
+        /* Modern Status Badges */
+        .status-pill {
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-pill::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .delivered {
+            background: #e7f7ef;
+            color: #0fa457;
+        }
+
+        .delivered::before {
+            background: #0fa457;
+        }
+
+        .canceled {
+            background: #fff0f0;
+            color: #d93025;
+        }
+
+        .canceled::before {
+            background: #d93025;
+        }
+
+        .ordered {
+            background: #fff8e6;
+            color: #f29900;
+        }
+
+        .ordered::before {
+            background: #f29900;
+        }
+
+        /* Action Button */
+        .btn-view-order {
+            width: 45px;
+            height: 45px;
+            background: #111;
+            color: #fff;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+            text-decoration: none;
+        }
+
+        .btn-view-order:hover {
+            background: #333;
+            color: #fff;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Pagination Customization */
+        .custom-pagination {
+            margin-top: 40px;
+        }
+
+        .page-link {
+            border: none;
+            padding: 12px 18px;
+            border-radius: 12px !important;
+            color: #111;
+            font-weight: 600;
+        }
+
+        .active .page-link {
+            background: #111 !important;
+            color: #fff !important;
         }
     </style>
-    <main class="pt-90" style="padding-top: 0px;">
+
+    <main class="pt-90">
         <div class="mb-4 pb-4"></div>
         <section class="my-account container">
-            <h2 class="page-title">Orders</h2>
-            <div class="row">
-                <div class="col-lg-2">
+            <h2 class="page-title">Orders History</h2>
+            <div class="row gx-lg-5">
+                <div class="col-lg-3">
                     @include('user.account-nav')
-
                 </div>
 
-                <div class="col-lg-10">
-                    <div class="wg-table table-all-user">
+                <div class="col-lg-9">
+                    <div class="order-table-container">
                         <div class="table-responsive">
-                            <table class="table table-striped table-bordered">
+                            <table class="table">
                                 <thead>
                                     <tr>
-                                        <th style="width: 80px">OrderNo</th>
-                                        <th>Name</th>
-                                        <th class="text-center">Phone</th>
-                                        <th class="text-center">Subtotal</th>
-                                        <th class="text-center">Tax</th>
-                                        <th class="text-center">Total</th>
-
+                                        <th class="text-center">ID</th>
+                                        <th>Order Details</th>
+                                        <th class="text-center">Total Amount</th>
                                         <th class="text-center">Status</th>
-                                        <th class="text-center">Order Date</th>
-                                        <th class="text-center">Items</th>
-                                        <th class="text-center">Delivered On</th>
-                                        <th></th>
+                                        <th class="text-center">Date</th>
+                                        <th class="text-center">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($orders as $order)
                                         <tr>
-                                            <td class="text-center">{{ $loop->iteration }}</td>
-                                            <td class="text-center">{{ $order->name }}</td>
-                                            <td class="text-center">{{$order->phone}}</td>
-                                            <td class="text-center">${{ $order->subtotal }}</td>
-                                            <td class="text-center">${{ $order->tax }}</td>
-                                            <td class="text-center">${{ $order->total }}</td>
-
+                                            <td class="text-center fw-bold" style="color: #999;">#{{ $order->id }}</td>
+                                            <td>
+                                                <div class="d-flex flex-column">
+                                                    <span class="fw-bold text-dark">{{ $order->name }}</span>
+                                                    <span class="small text-muted">{{ $order->orderItems->count() }} Items
+                                                        Ordered</span>
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="fw-bold"
+                                                    style="font-size: 16px; color: #111;">${{ number_format($order->total, 2) }}</span>
+                                            </td>
                                             <td class="text-center">
                                                 @if ($order->status == 'delivered')
-                                                    <span class="badge bg-success">Delivered</span>
+                                                    <span class="status-pill delivered">Delivered</span>
                                                 @elseif ($order->status == 'canceled')
-                                                    <span class="badge bg-danger">Canceled</span>
+                                                    <span class="status-pill canceled">Canceled</span>
                                                 @else
-                                                    <span class="badge bg-warning">Ordered</span>
+                                                    <span class="status-pill ordered">Processing</span>
                                                 @endif
-                                                {{-- <span class="badge bg-danger">{{$order->status}}</span> --}}
                                             </td>
-                                            <td class="text-center">{{ $order->created_at }}</td>
-                                            <td class="text-center">{{ $order->orderItems->count() }}</td>
-                                            <td class="text-center">{{ $order->delivered_date }}</td>
                                             <td class="text-center">
-                                                <a href="{{ route('user.orders.details', $order->id) }}">
-                                                    <div class="list-icon-function view-icon">
-                                                        <div class="item eye">
-                                                            <i class="fa fa-eye"></i>
-                                                        </div>
-                                                    </div>
-                                                </a>
+                                                <span
+                                                    class="text-muted small fw-600">{{ $order->created_at->format('d M, Y') }}</span>
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="d-flex justify-content-center">
+                                                    <a href="{{ route('user.orders.details', $order->id) }}"
+                                                        class="btn-view-order">
+                                                        <i class="fa fa-arrow-right"></i>
+                                                    </a>
+                                                </div>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -101,13 +229,11 @@
                             </table>
                         </div>
                     </div>
-                    <div class="divider"></div>
-                    <div class="d-flex align-items-center justify-content-center">
+
+                    <div class="custom-pagination d-flex justify-content-center">
                         {{ $orders->links('pagination::bootstrap-5') }}
                     </div>
                 </div>
-            </div>
-
             </div>
         </section>
     </main>

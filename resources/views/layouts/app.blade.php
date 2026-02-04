@@ -642,14 +642,23 @@
                     @else
                         <div class="header-tools__item hover-container">
                             <a href="{{ auth()->user()->uType === 'ADM' ? route('admin.index') : route('user.index') }}"
-                                class="header-tools__item">
-                                <span class="pr-6px">{{ auth()->user()->name }}</span>
-                                <svg class="d-block" width="20" height="20" viewBox="0 0 20 20" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <use href="#icon_user" />
-                                </svg>
-                            </a>
+                                class="header-tools__item d-flex align-items-center">
 
+                                <span class="pr-6px">{{ auth()->user()->name }}</span>
+
+                                <div class="user-avatar-header ml-2">
+                                    @if (auth()->user()->image)
+                                        <img src="{{ asset('uploads/users/' . auth()->user()->image) }}"
+                                            alt="{{ auth()->user()->name }}"
+                                            style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 1px solid #eee;">
+                                    @else
+                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <use href="#icon_user" />
+                                        </svg>
+                                    @endif
+                                </div>
+                            </a>
                         </div>
                     @endguest
 

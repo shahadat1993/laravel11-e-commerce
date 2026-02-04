@@ -1,177 +1,187 @@
 @extends('layouts.app')
 @section('content')
     <style>
-        .table> :not(caption)>tr>th {
-            padding: 0.625rem 1.5rem .625rem !important;
-            background-color: #6a6e51 !important;
+        /* জেনারেল পেজ সেটিংস */
+        .my-account {
+            padding-top: 50px;
+            padding-bottom: 80px;
+            background-color: #f9f9f9;
         }
 
-        .table>tr>td {
-            padding: 0.625rem 1.5rem .625rem !important;
-        }
-
-        .table-bordered> :not(caption)>tr>th,
-        .table-bordered> :not(caption)>tr>td {
-            border-width: 1px 1px;
-            border-color: #6a6e51;
-        }
-
-        .table> :not(caption)>tr>td {
-            padding: .8rem 1rem !important;
-        }
-
-        .bg-success {
-            background-color: #40c710 !important;
-        }
-
-        .bg-danger {
-            background-color: #f44032 !important;
-        }
-
-        .bg-warning {
-            background-color: #f5d700 !important;
-            color: #000;
-        }
-
-        .pt-90 {
-            padding-top: 90px !important;
-        }
-
-        .pr-6px {
-            padding-right: 6px;
+        .page-title {
+            font-size: 24px;
+            font-weight: 800;
             text-transform: uppercase;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 15px;
+            letter-spacing: -0.5px;
         }
 
-        .my-account .page-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            margin-bottom: 40px;
-            border-bottom: 1px solid;
-            padding-bottom: 13px;
-        }
-
+        /* ড্যাশবোর্ড বক্স (wg-box) ডিজাইন */
         .my-account .wg-box {
-            display: -webkit-box;
-            display: -moz-box;
-            display: -ms-flexbox;
-            display: -webkit-flex;
-            display: flex;
-            padding: 24px;
-            flex-direction: column;
-            gap: 24px;
-            border-radius: 12px;
-            background: var(--White);
-            box-shadow: 0px 4px 24px 2px rgba(20, 25, 38, 0.05);
+            padding: 30px;
+            border-radius: 15px;
+            background: #fff;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+            border: 1px solid #f0f0f0;
+            margin-bottom: 30px;
         }
 
-        .bg-success {
-            background-color: #40c710 !important;
-        }
-
-        .bg-danger {
-            background-color: #f44032 !important;
-        }
-
-        .bg-warning {
-            background-color: #f5d700 !important;
-            color: #000;
-        }
-
-        .table-transaction>tbody>tr:nth-of-type(odd) {
-            --bs-table-accent-bg: #fff !important;
-
-        }
-
+        /* টেবিল স্টাইল */
         .table-transaction th,
         .table-transaction td {
-            padding: 0.625rem 1.5rem .25rem !important;
-            color: #000 !important;
-        }
-
-        .table> :not(caption)>tr>th {
-            padding: 0.625rem 1.5rem .25rem !important;
-            background-color: #6a6e51 !important;
-        }
-
-        .table-bordered>:not(caption)>*>* {
-            border-width: inherit;
-            line-height: 32px;
-            font-size: 14px;
-            border: 1px solid #e1e1e1;
+            padding: 15px 20px !important;
             vertical-align: middle;
+            border: 1px solid #f1f1f1 !important;
         }
 
+        /* টেবিল হেডার (আপনার আগের কালারটি আরও প্রিমিয়াম করা হয়েছে) */
+        .table> :not(caption)>tr>th {
+            padding: 12px 20px !important;
+            background-color: #111 !important;
+            /* প্রফেশনাল ডার্ক লুক */
+            color: #fff !important;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 13px;
+        }
+
+        .table-transaction th {
+            background-color: #fcfcfc !important;
+            color: #666 !important;
+            font-weight: 700;
+            width: 15%;
+        }
+
+        /* স্ট্যাটাস ব্যাজ */
+        .badge {
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+
+        .bg-success {
+            background-color: #e7f7ef !important;
+            color: #0fa457 !important;
+        }
+
+        .bg-danger {
+            background-color: #fff0f0 !important;
+            color: #d93025 !important;
+        }
+
+        .bg-warning {
+            background-color: #fff8e6 !important;
+            color: #f29900 !important;
+        }
+
+        /* প্রোডাক্ট ইমেজ এবং নাম */
         .table-striped .image {
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 50px;
-            height: 50px;
-            flex-shrink: 0;
+            width: 60px;
+            height: 60px;
             border-radius: 10px;
             overflow: hidden;
-        }
-
-        .table-striped td:nth-child(1) {
-            min-width: 250px;
-            padding-bottom: 7px;
+            border: 1px solid #eee;
+            background: #fff;
         }
 
         .pname {
             display: flex;
-            gap: 13px;
+            align-items: center;
+            gap: 15px;
         }
 
-        .table-bordered> :not(caption)>tr>th,
-        .table-bordered> :not(caption)>tr>td {
-            border-width: 1px 1px;
-            border-color: #6a6e51;
+        .body-title-2 {
+            font-weight: 700;
+            color: #111;
+            text-decoration: none;
+        }
+
+        .body-title-2:hover {
+            text-decoration: underline;
+        }
+
+        /* অ্যাড্রেস সেকশন */
+        .address-detail-card {
+            background: #fbfbfb;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px dashed #ddd;
+        }
+
+        .address-detail-card p {
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        /* বাটন স্টাইল */
+        .btn-primary {
+            background: #111;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            font-weight: 700;
+            transition: 0.3s;
+        }
+
+        .btn-primary:hover {
+            background: #333;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-weight: 700;
+        }
+
+        .divider {
+            border-top: 1px solid #eee;
+            margin: 20px 0;
         }
     </style>
-    <main class="pt-90" style="padding-top: 0px;">
+
+    <main class="pt-90">
         <div class="mb-4 pb-4"></div>
         <section class="my-account container">
-            <h2 class="page-title">Orders</h2>
+            <h2 class="page-title">Orders Details</h2>
             <div class="row">
                 <div class="col-lg-2">
                     @include('user.account-nav')
-
                 </div>
 
                 <div class="col-lg-10">
+                    {{-- ১ম বক্স: অর্ডার ডিটেইলস --}}
                     <div class="wg-box">
-                        <div class="flex items-center justify-between gap10 flex-wrap">
-                            <div class="wg-filter flex-grow row">
-                                <div class="col-6">
-                                    <h5>Ordered Details</h5>
-
-                                </div>
-                                <div class="col-6">
-                                    <a class="tf-button style-1 w208 btn btn-sm btn-primary float-end"
-                                        href="{{ route('user.orders') }}">Back</a>
-
-                                </div>
-                            </div>
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5 class="m-0 fw-bold">Order Summary</h5>
+                            <a class="btn btn-sm btn-primary text-white" href="{{ route('user.orders') }}">Back to List</a>
                         </div>
                         <div class="table-responsive">
-                            <table class="table table-striped table-bordered table-transaction">
-                                <thead>
+                            <table class="table table-bordered table-transaction">
+                                <tbody>
                                     <tr>
                                         <th>Order No</th>
-                                        <td>{{$order->id}}</td>
+                                        <td>#{{ $order->id }}</td>
                                         <th>Mobile</th>
-                                        <td>{{$order->phone}}</td>
+                                        <td>{{ $order->phone }}</td>
                                         <th>Zip Code</th>
-                                        <td>{{$order->zip}}</td>
+                                        <td>{{ $order->zip }}</td>
                                     </tr>
                                     <tr>
                                         <th>Order Date</th>
-                                        <td>{{$order->created_at}}</td>
+                                        <td>{{ $order->created_at }}</td>
                                         <th>Delivery Date</th>
-                                        <td>{{$order->delivered_date}}</td>
+                                        <td>{{ $order->delivered_date ?? 'N/A' }}</td>
                                         <th>Canceled Date</th>
-                                        <td>{{$order->canceled_date}}</td>
+                                        <td>{{ $order->canceled_date ?? 'N/A' }}</td>
                                     </tr>
                                     <tr>
                                         <th>Order Status</th>
@@ -185,224 +195,131 @@
                                             @endif
                                         </td>
                                     </tr>
-
-                                </thead>
-
+                                </tbody>
                             </table>
                         </div>
-
                     </div>
+
+                    {{-- ২য় বক্স: অর্ডার আইটেমস --}}
                     <div class="wg-box">
-                        <div class="flex items-center justify-between gap10 flex-wrap">
-                            <div class="wg-filter flex-grow row">
-                                <div class="col-6">
-                                    <h5>Ordered Items</h5>
-
-                                </div>
-                                <div class="col-6">
-                                    <a class="tf-button style-1 w208 btn btn-sm btn-primary float-end"
-                                        href="{{ route('user.orders') }}">Back</a>
-
-                                </div>
-
-                            </div>
-
-                        </div>
+                        <h5 class="fw-bold mb-4">Ordered Items</h5>
                         <div class="table-responsive">
                             <table class="table table-striped table-bordered">
                                 <thead>
-
                                     <tr>
-                                        <th>Name</th>
+                                        <th>Product Name</th>
                                         <th class="text-center">Price</th>
-                                        <th class="text-center">Quantity</th>
+                                        <th class="text-center">Qty</th>
                                         <th class="text-center">SKU</th>
                                         <th class="text-center">Category</th>
                                         <th class="text-center">Brand</th>
-                                        <th class="text-center">Options</th>
-                                        <th class="text-center">Return Status</th>
+                                        <th class="text-center">Return</th>
                                         <th class="text-center">Invoice</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($order->orderItems as $item)
                                         <tr>
-                                            <td class="pname" style="border:2;">
+                                            <td class="pname">
                                                 <div class="image">
                                                     <img src="{{ asset('uploads/products') . '/' . $item->product->image }}"
-                                                        alt="{{ $item->product->name }}" class="image img-fluid">
+                                                        alt="" class="img-fluid">
                                                 </div>
                                                 <div class="name">
-                                                    <a href="{{ route('shop.details', $item->product->slug) }}" target="_blank"
-                                                        class="body-title-2">{{ $item->product->name }}</a>
+                                                    <a href="{{ route('shop.details', $item->product->slug) }}"
+                                                        target="_blank" class="body-title-2">{{ $item->product->name }}</a>
+                                                    <div class="small text-muted">{{ $item->options }}</div>
                                                 </div>
                                             </td>
-                                            <td class="text-center">${{ $item->price }}</td>
-                                            <td class="text-center">{{ $item->quantity }}</td>
-                                            <td class="text-center">{{ $item->product->sku }}</td>
-                                            <td class="text-center">{{ $item->product->category->name }}</td>
-                                            <td class="text-center">{{ $item->product->brand->name }}</td>
-                                            <td class="text-center">{{ $item->options }}</td>
+                                            <td class="text-center fw-bold">${{ $item->price }}</td>
+                                            <td class="text-center fw-bold">{{ $item->quantity }}</td>
+                                            <td class="text-center small">{{ $item->product->sku }}</td>
+                                            <td class="text-center small">{{ $item->product->category->name }}</td>
+                                            <td class="text-center small">{{ $item->product->brand->name }}</td>
                                             <td class="text-center">{{ $item->rstatus == 0 ? 'NO' : 'YES' }}</td>
                                             <td class="text-center">
                                                 <a href="{{ route('invoice.download', $order->id) }}"
-                                                   class="badge badge-primary " style="color: blue">
-                                                    Download
+                                                    class="fw-bold text-primary small">
+                                                    <i class="fa fa-download"></i> PDF
                                                 </a>
                                             </td>
                                         </tr>
                                     @endforeach
-
-
                                 </tbody>
                             </table>
                         </div>
-
                         <div class="divider"></div>
-                        <div class="flex items-center justify-between flex-wrap gap10 wgp-pagination">
+                        <div class="d-flex justify-content-center">
                             {{ $orderItems->links('pagination::bootstrap-5') }}
                         </div>
                     </div>
 
-                    <div class="wg-box mt-5">
-                        <h5>Shipping Address</h5>
-                        <div class="my-account__address-item col-md-6">
-                            <div class="my-account__address-item__detail">
-                                <p>{{ $order->name }}</p>
-                                <p>{{ $order->address }}</p>
-                                <p>{{$order->locality}}</p>
-                                <p>{{ $order->city }},{{ $order->country }} </p>
-                                <p>{{$order->landmark}}</p>
-                                <p>{{$order->zip}}</p>
-                                <br>
-                                <p>Mobile : {{$order->phone}}</p>
+                    <div class="row">
+                        {{-- ৩য় বক্স: শিপিং অ্যাড্রেস --}}
+                        <div class="col-md-6">
+                            <div class="wg-box h-100">
+                                <h5 class="fw-bold mb-3">Shipping Address</h5>
+                                <div class="address-detail-card">
+                                    <p class="fw-bold text-dark">{{ $order->name }}</p>
+                                    <p>{{ $order->address }}</p>
+                                    <p>{{ $order->locality }}</p>
+                                    <p>{{ $order->city }}, {{ $order->country }} - {{ $order->zip }}</p>
+                                    <p class="mt-2 fw-bold text-dark">Mobile: {{ $order->phone }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- ৪র্থ বক্স: ট্রানজেকশন --}}
+                        <div class="col-md-6">
+                            <div class="wg-box h-100">
+                                <h5 class="fw-bold mb-3">Transactions Summary</h5>
+                                <table class="table table-bordered table-transaction">
+                                    <tbody>
+                                        <tr>
+                                            <th>Subtotal</th>
+                                            <td class="fw-bold">${{ $order->subtotal }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Tax & Discount</th>
+                                            <td class="fw-bold">T: ${{ $order->tax }} | D: -${{ $order->discount }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Total Amount</th>
+                                            <td class="fw-bold text-dark" style="font-size: 18px;">${{ $order->total }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Payment</th>
+                                            <td>
+                                                {{ $transactions->mode }} -
+                                                @if ($transactions->status == 'approved')
+                                                    <span class="badge bg-success">Approved</span>
+                                                @else
+                                                    <span class="badge bg-warning">Pending</span>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
 
-                    <div class="wg-box mt-5">
-                        <h5>Transactions</h5>
-                        <table class="table table-striped table-bordered table-transaction">
-                            <tbody>
-                                <tr>
-                                    <th>Subtotal</th>
-                                    <td>{{ $order->subtotal }}</td>
-                                    <th>Tax</th>
-                                    <td>{{ $order->tax }}</td>
-                                    <th>Discount</th>
-                                    <td>{{$order->discount}}</td>
-                                </tr>
-                                <tr>
-                                    <th>Total</th>
-                                    <td>{{$order->total}}</td>
-                                    <th>Payment Mode</th>
-                                    <td>{{ $transactions->mode }}</td>
-                                    <th>Status</th>
-                                    <td>
-                                        @if ($transactions->status == 'approved')
-                                            <span class="badge bg-success">Approved</span>
-                                        @elseif($transactions->status == 'declined')
-                                            <span class="badge bg-danger">Declined</span>
-                                        @elseif($transactions->status == 'refunded')
-                                            <span class="badge bg-secondary">Refunded</span>
-                                        @else
-                                            <span class="badge bg-warning">Pending</span>
-
-                                        @endif
-                                    </td>
-                                </tr>
-
-                            </tbody>
-                        </table>
-                    </div>
-                    @if($order->status != 'delivered' && $order->status != 'canceled')
-                        <div class="wg-box mt-5 text-right">
+                    {{-- ক্যানসেল বাটন --}}
+                    @if ($order->status != 'delivered' && $order->status != 'canceled')
+                        <div class="wg-box mt-4 text-center">
                             <form id="cancelOrderForm" action="{{ route('user.orders.cancel') }}" method="POST">
                                 @csrf
-
                                 <input type="hidden" name="order_id" value="{{ $order->id }}">
-                                <button type="button" id="cancelOrderBtn" class="btn btn-danger" data-id="{{ $order->id }}">
-                                    Cancel Order
+                                <button type="button" id="cancelOrderBtn" class="btn btn-danger px-5"
+                                    data-id="{{ $order->id }}">
+                                    Cancel This Order
                                 </button>
                             </form>
-
                         </div>
                     @endif
-
                 </div>
-
-
             </div>
-
-
         </section>
     </main>
 @endsection
-@push('scripts')
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        document.getElementById('cancelOrderBtn').addEventListener('click', function () {
-            let orderId = this.getAttribute('data-id');
-            let button = this;
-
-            Swal.fire({
-                title: "Cancel this Order?",
-                text: "You are about to cancel your order. This action cannot be undone.",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#d33",
-                cancelButtonColor: "#3085d6",
-                confirmButtonText: "Yes, Cancel it!",
-                cancelButtonText: "No, Go Back",
-                reverseButtons: true,
-                showClass: { popup: "animate__animated animate__zoomIn animate__faster" },
-                hideClass: { popup: "animate__animated animate__zoomOut animate__faster" }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    button.disabled = true;
-                    button.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Canceling...`;
-
-                    let formData = new FormData();
-                    formData.append('order_id', orderId);
-                    formData.append('_token', '{{ csrf_token() }}');
-
-                    fetch('{{ route("user.orders.cancel") }}', {
-                        method: 'POST',
-                        headers: {
-                            'Accept': 'application/json' // Laravel কে বলে দাও JSON expect করবে
-                        },
-                        body: formData
-                    })
-
-
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.success) {
-                                Swal.fire({
-                                    title: "Order Canceled!",
-                                    text: data.message,
-                                    icon: "success",
-                                    showConfirmButton: false,
-                                    timer: 1800
-                                });
-                                setTimeout(() => location.reload(), 1800);
-                            } else {
-                                Swal.fire("Oops!", data.message, "error");
-                                button.disabled = false;
-                                button.innerHTML = "Cancel Order";
-                            }
-                        })
-                        .catch(err => {
-                            console.error(err);
-                            Swal.fire("Oops!", "Something went wrong", "error");
-                            button.disabled = false;
-                            button.innerHTML = "Cancel Order";
-                        });
-                }
-            });
-        });
-    </script>
-
-
-
-@endpush

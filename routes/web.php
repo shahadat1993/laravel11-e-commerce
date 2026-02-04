@@ -40,12 +40,20 @@ Route::delete('/cart/coupon/remove', [CartController::class, 'remove_coupon_code
 Route::get('/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
 Route::post('/place-an-order', [CartController::class, 'place_an_order'])->name('cart.place.an.order');
 Route::get('/order-confirmation', [CartController::class, 'order_confirmation'])->name('cart.order-confirmation');
+// EDIT ADDRESS from Checkout
+Route::get('/checkout/address/edit/{id}', [CartController::class, 'edit_address_checkout'])->name('checkout.address.edit');
+
+// UPDATE ADDRESS from Checkout
+Route::put('/checkout/address/update/{id}', [CartController::class, 'update_address_checkout'])->name('checkout.address.update');
+
+
 
 
 
 // USER ACCOUNT DETAILS
 Route::middleware('auth')->group(function () {
-    Route::get('/user/account-details', [UserController::class, 'account_details'])->name('user.account.details');
+    Route::get('/account-details', [UserController::class, 'account_details'])->name('user.account.details');
+    Route::post('/account-update', [UserController::class, 'account_update'])->name('user.account.update');
 });
 
 
@@ -56,6 +64,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/user/address/store', [UserController::class, 'store_address'])->name('user.address.store');
     Route::post('/user/address/default/{id}', [UserController::class, 'setDefault'])->name('user.address.default');
     Route::delete('/user/address/delete/{id}', [UserController::class, 'destroy'])->name('user.address.delete');
+    Route::get('/user/address/edit/{id}', [UserController::class, 'edit_address'])->name('user.address.edit');
+    Route::put('/user/address/update/{id}', [UserController::class, 'update_address'])->name('user.address.update');
 });
 
 // CONTACT-US

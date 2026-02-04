@@ -55,4 +55,24 @@ public function orders() {
     return $this->hasMany(Order::class);
 }
 
+
+// Adress relationship
+public function addresses()
+{
+    return $this->hasMany(Address::class);
+}
+
+protected static function booted()
+{
+    static::deleting(function ($user) {
+        if ($user->isForceDeleting()) {
+            $user->addresses()->forceDelete();
+        } else {
+            $user->addresses()->delete();
+        }
+    });
+}
+
+
+
 }
