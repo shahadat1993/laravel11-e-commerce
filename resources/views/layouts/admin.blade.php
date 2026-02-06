@@ -17,6 +17,7 @@
     <link rel="shortcut icon" href="{{ asset('images/favicon.ico') }}">
     <link rel="apple-touch-icon-precomposed" href="{{ asset('images/favicon.ico') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/sweetalert.min.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css" rel="stylesheet" />
     <link rel="stylesheet" type="text/css" href="{{ asset('css/custom.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
         integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
@@ -304,21 +305,23 @@
 
                                 <li class="menu-item has-children">
                                     <a href="javascript:void(0);" class="menu-item-button">
-                                        <div class="icon"><i class="icon-file-plus"></i></div>
-                                        <div class="text">Order</div>
+                                        <div class="icon"><i class="ri-user-received-2-line"></i></div>
+                                        <div class="text">Role & Permission</div>
                                     </a>
                                     <ul class="sub-menu">
                                         <li class="sub-menu-item">
-                                            <a href="{{ route('admin.orders') }}" class="">
-                                                <div class="text">Orders</div>
+                                            <a href="{{ route('admin.createUser.index') }}" class="">
+                                                <div class="text">Create Users</div>
                                             </a>
                                         </li>
-                                        <li class="sub-menu-item">
-                                            <a href="{{ route('admin.order.track') }}" class="">
-                                                <div class="text">Order tracking</div>
-                                            </a>
-                                        </li>
+
                                     </ul>
+                                </li>
+                                <li class="menu-item">
+                                    <a href="{{ route('admin.orders') }}" class="">
+                                        <div class="icon"><i class="icon-image"></i></div>
+                                        <div class="text">Slides</div>
+                                    </a>
                                 </li>
                                 <li class="menu-item">
                                     <a href="{{ route('admin.slide.index') }}" class="">
@@ -472,66 +475,70 @@
 
 
 
-                              <!-- Dropdown wrapper -->
-<div class="popup-wrap user type-header">
-    <div class="dropdown">
-        <button class="btn btn-secondary dropdown-toggle" type="button"
-            id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-expanded="false">
-            <span class="header-user wg-user">
-                <span class="image">
-                    <img src="{{ auth()->user()->image ? asset('uploads/profile/' . auth()->user()->image) : 'https://api.dicebear.com/9.x/initials/svg?seed=' . urlencode(auth()->user()->name) }}"
-                        alt="{{ auth()->user()->name }}"
-                        class="border"
-                        style="width: 48px; height: 48px; object-fit: cover; border-radius: 100%;">
-                </span>
-                <span class="flex flex-column">
-                    <span class="body-title mb-2">{{ auth()->user()->name }}</span>
-                    <span class="text-tiny">Admin</span>
-                </span>
-            </span>
-        </button>
+                                <!-- Dropdown wrapper -->
+                                <div class="popup-wrap user type-header">
+                                    <div class="dropdown">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button"
+                                            id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <span class="header-user wg-user">
+                                                <span class="image">
+                                                    <img src="{{ auth()->user()->image ? asset('uploads/profile/' . auth()->user()->image) : 'https://api.dicebear.com/9.x/initials/svg?seed=' . urlencode(auth()->user()->name) }}"
+                                                        alt="{{ auth()->user()->name }}" class="border"
+                                                        style="width: 48px; height: 48px; object-fit: cover; border-radius: 100%;">
+                                                </span>
+                                                <span class="flex flex-column">
+                                                    <span class="body-title mb-2">{{ auth()->user()->name }}</span>
+                                                    <span class="text-tiny">Admin</span>
+                                                </span>
+                                            </span>
+                                        </button>
 
-        <ul class="dropdown-menu dropdown-menu-end has-content" aria-labelledby="dropdownMenuButton3">
-            <li>
-                <div class="user-item">
-                    <div class="icon"><i class="icon-user"></i></div>
-                    <div class="body-title-2">
-                        <form action="{{ route('admin.profile') }}" method="GET">
-                            @csrf
-                            <button type="submit" style="background:none; border:none; padding:0; cursor:pointer;">
-                                Profile
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </li>
-            <li>
-                <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="user-item">
-                    <div class="icon"><i class="icon-log-out"></i></div>
-                    <div class="body-title-2">Log out</div>
-                </a>
-                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-    @csrf
-</form>
+                                        <ul class="dropdown-menu dropdown-menu-end has-content"
+                                            aria-labelledby="dropdownMenuButton3">
+                                            <li>
+                                                <div class="user-item">
+                                                    <div class="icon"><i class="icon-user"></i></div>
+                                                    <div class="body-title-2">
+                                                        <form action="{{ route('admin.profile') }}" method="GET">
+                                                            @csrf
+                                                            <button type="submit"
+                                                                style="background:none; border:none; padding:0; cursor:pointer;">
+                                                                Profile
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <a href="#"
+                                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                                                    class="user-item">
+                                                    <div class="icon"><i class="icon-log-out"></i></div>
+                                                    <div class="body-title-2">Log out</div>
+                                                </a>
+                                                <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                                    style="display: none;">
+                                                    @csrf
+                                                </form>
 
 
-            </li>
-        </ul>
-    </div>
-</div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
 
-<!-- JS scripts at the bottom of body -->
-<script src="{{ asset('js/jquery.min.js') }}"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Optional: manually initialize all dropdowns to avoid conflicts
-        var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'))
-        var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
-            return new bootstrap.Dropdown(dropdownToggleEl)
-        })
-    });
-</script>
+                                <!-- JS scripts at the bottom of body -->
+                                <script src="{{ asset('js/jquery.min.js') }}"></script>
+                                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+                                <script>
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        // Optional: manually initialize all dropdowns to avoid conflicts
+                                        var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'))
+                                        var dropdownList = dropdownElementList.map(function(dropdownToggleEl) {
+                                            return new bootstrap.Dropdown(dropdownToggleEl)
+                                        })
+                                    });
+                                </script>
 
 
                             </div>
@@ -540,24 +547,24 @@
                     <div class="main-content">
                         @yield('content')
 
-                          {{-- Success Session msg --}}
-    @if (session('success'))
-        <div class="toast-wrapper">
-            <div id="appToast" class="app-toast success">
-                <div class="toast-icon">✓</div>
+                        {{-- Success Session msg --}}
+                        @if (session('success'))
+                            <div class="toast-wrapper">
+                                <div id="appToast" class="app-toast success">
+                                    <div class="toast-icon">✓</div>
 
-                <div class="toast-content">
-                    <strong>Success</strong>
-                    <p>{{ session('success') }}</p>
-                </div>
+                                    <div class="toast-content">
+                                        <strong>Success</strong>
+                                        <p>{{ session('success') }}</p>
+                                    </div>
 
-                <span class="toast-close">&times;</span>
+                                    <span class="toast-close">&times;</span>
 
-                {{-- progress bar --}}
-                <div class="toast-progress"></div>
-            </div>
-        </div>
-    @endif
+                                    {{-- progress bar --}}
+                                    <div class="toast-progress"></div>
+                                </div>
+                            </div>
+                        @endif
 
 
                         <div class="bottom-page">
@@ -616,7 +623,7 @@
         });
     </script>
 
-     {{-- Bootstrap JS --}}
+    {{-- Bootstrap JS --}}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     {{-- Toast trigger --}}

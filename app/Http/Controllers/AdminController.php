@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\User;
 use App\Models\Brand;
 use App\Models\Order;
 use App\Models\Slide;
@@ -15,6 +16,8 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use SweetAlert2\Laravel\Swal;
 use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
@@ -575,25 +578,64 @@ class AdminController extends Controller
 
     // Transaction status update
     public function updateTransactionStatus(Request $request)
-{
-    $request->validate([
-        'order_id' => 'required|exists:orders,id',
-        'transaction_status' => 'required|string|in:pending,approved,refunded'
-    ]);
+    {
+        $request->validate([
+            'order_id' => 'required|exists:orders,id',
+            'transaction_status' => 'required|string|in:pending,approved,refunded'
+        ]);
 
-    $transaction = Transaction::where('order_id', $request->order_id)->first();
+        $transaction = Transaction::where('order_id', $request->order_id)->first();
 
-    if (!$transaction) {
-        return redirect()->back()->with('error', 'Transaction not found for this order.');
+        if (!$transaction) {
+            return redirect()->back()->with('error', 'Transaction not found for this order.');
+        }
+
+        // Admin selected value থেকে update করা
+        $transaction->status = $request->transaction_status;
+        $transaction->save();
+
+        return redirect()->route('admin.orders.details', $request->order_id)
+            ->with('success', 'Transaction status updated successfully!');
     }
 
-    // Admin selected value থেকে update করা
-    $transaction->status = $request->transaction_status;
-    $transaction->save();
 
-    return redirect()->route('admin.orders.details', $request->order_id)
-        ->with('success', 'Transaction status updated successfully!');
+
+    // Create User method
+    public function create_user()
+    {
+        $roles = Role::all();
+        return view('admin.role&permission.createUser',compact('roles'));
+    }
+
+    // Store User method
+    public function store_user(Request $request){
+        $request->validate([
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|email|unique:users,email',
+            'mobile'   => 'nullable|string|max:20',
+            'password' => 'required|string|min:8|confirmed',
+            'roles'    => 'required',
+            'image'    => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+        ]);
+
+        $user=new User();
+        $user->name=$request->name;
+        $user->email=$request->email;
+        $user->mobile=$request->mobile;
+        $user->password=Hash::make($request->password);
+
+        if($request->hasFile('image')){
+            $image=$request->file('image');
+            $imageName=Str::slug($request->name) . '-' . time() . '.'.$image->getClientOriginalName();
+            $image->move(public_path('uploads/users/'),$imageName);
+            $user->image=$imageName;
+        }
+
+            $user->save();
+
+            $user->assignRole($request->roles);
+
+        return redirect()->back()->with('success','User Created Successfully!');
+
+    }
 }
-
-}
-

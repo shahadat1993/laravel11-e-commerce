@@ -16,12 +16,9 @@ class DatabaseSeeder extends Seeder
         $this->call([
             MonthSeeder::class,
         ]);
-        // User::factory(10)->create();
 
-        // User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        //     'mobile' => '+8801858838730',
-        // ]);
+
+        $this->call(RolePermissionSeeder::class);
+
     }
 }

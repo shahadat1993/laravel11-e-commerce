@@ -3,15 +3,17 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
+    use HasRoles;
     /**
      * The attributes that are mass assignable.
      *
@@ -21,8 +23,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'mobile', // যোগ করুন
-        'image',  // যোগ করুন
+        'mobile',
+        'image',
     ];
 
     /**
@@ -51,28 +53,41 @@ class User extends Authenticatable
 
     // orders relationship
     // User.php
-public function orders() {
-    return $this->hasMany(Order::class);
-}
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
 
 
-// Adress relationship
-public function addresses()
-{
-    return $this->hasMany(Address::class);
-}
+    // Adress relationship
+    public function addresses()
+    {
+        return $this->hasMany(Address::class);
+    }
 
-protected static function booted()
-{
-    static::deleting(function ($user) {
-        if ($user->isForceDeleting()) {
-            $user->addresses()->forceDelete();
-        } else {
-            $user->addresses()->delete();
+    protected static function booted()
+    {
+        static::deleting(function ($user) {
+            if ($user->isForceDeleting()) {
+                $user->addresses()->forceDelete();
+            } else {
+                $user->addresses()->delete();
+            }
+        });
+    }
+
+    // Accessor for image URL
+    public function getImageUrlAttribute()
+    {
+        if (!$this->image) {
+            return asset('images/no-image.png'); // default image
         }
-    });
-}
 
+        // Current system অনুযায়ী path
+        if ($this->uType === 'ADM') {
+            return asset('uploads/profile/' . $this->image);
+        }
 
-
+        return asset('uploads/users/' . $this->image);
+    }
 }

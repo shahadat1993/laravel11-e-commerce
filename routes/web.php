@@ -10,6 +10,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WishListController;
 use App\Http\Controllers\EcommerceController;
+use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\ShopController;
 use App\Http\Controllers\Admin\CategoryController;
 
@@ -100,9 +101,43 @@ Route::get('/search', [EcommerceController::class, 'search'])->name('product.sea
 
 
 // BACKEND
+
 Route::middleware(['auth', 'verified', AuthAdmin::class])->group(function () {
-    Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
+
+    // ১. সাধারণ অ্যাডমিন ড্যাশবোর্ড (সব স্টাফের জন্য)});
+    Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');/** */
     Route::get('/admin/dashboard/chart-data', [AdminController::class, 'chartData'])->name('admin.dashboard.chart');
+    Route::get('/admin/search', [AdminController::class, 'search'])->name('admin.search');
+    Route::get('/admin/profile', [AdminController::class, 'profile'])->name('admin.profile');
+    Route::put('/admin/profile/update', [ProfileController::class, 'update'])->name('admin.profile.update');
+
+
+    // ২. শুধুমাত্র 'Admin' রোলের জন্য (User & Contact Management)
+    Route::middleware(['role:Admin'])->group(function () {
+
+    });
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Route::middleware(['auth', 'verified', AuthAdmin::class])->group(function () {
+    /** */
     Route::get('/admin/brands', [AdminController::class, 'brands'])->name('admin.brands');
     Route::get('/admin/brands/add', [AdminController::class, 'addBrand'])->name('admin.add-brand');
     Route::post('/admin/brands/store', [AdminController::class, 'store_brand'])->name('admin.store');
@@ -173,9 +208,9 @@ Route::middleware(['auth', 'verified', AuthAdmin::class])->group(function () {
     Route::get('/admin/order/track-order', [AdminController::class, 'track_order'])->name('admin.order.track');
 
     // Transaction status update Route
-    Route::put('/admin/transaction/status', [AdminController::class, 'updateTransactionStatus'])
-        ->name('admin.transaction.status.update')
-        ->middleware('auth:admin');
+    // Route::put('/admin/transaction/status', [AdminController::class, 'updateTransactionStatus'])
+    //     ->name('admin.transaction.status.update')
+    //     ->middleware('auth:admin');
 });
 
 // Wishlist Routes
@@ -199,15 +234,14 @@ Route::middleware(['auth', 'verified', AuthAdmin::class])->group(function () {
 // BACKEND SEARCH ROUTE
 Route::middleware(['auth', 'verified', AuthAdmin::class])->group(function () {
     // admin search route
-    Route::get('/admin/search', [AdminController::class, 'search'])->name('admin.search');
+    /** */
     // admin product search route
     Route::get('/admin/products/search', [AdminController::class, 'searchProduct'])->name('admin.product.search');
 });
 // BACKEND Profile ROUTE
 Route::middleware(['auth', 'verified', AuthAdmin::class])->group(function () {
     // admin profile route
-    Route::get('/admin/profile', [AdminController::class, 'profile'])->name('admin.profile');
-    Route::put('/admin/profile/update', [ProfileController::class, 'update'])->name('admin.profile.update');
+
 
     // admin profile show route
     Route::get('/admin/profile/show', [UserController::class, 'users'])->name('admin.profile.show');
@@ -219,6 +253,15 @@ Route::middleware(['auth', 'verified', AuthAdmin::class])->group(function () {
     // User oder count route
     Route::get('/admin/user/{id}/orders', [UserController::class, 'showOrders'])->name('admin.user.orders');
 });
+
+// Backend Role & Permission Route
+Route::middleware(['auth', 'verified', AuthAdmin::class])->group(function () {
+    // Create user route
+    Route::get('/admin/create-user/', [AdminController::class, 'create_user'])->name('admin.createUser.index');
+    Route::post('/admin/store-user', [AdminController::class, 'create_user'])->name('admin.createUser.store');
+});
+
+
 // Route for invoice download
 Route::get('/invoice/{order}', [InvoiceController::class, 'download'])
     ->name('invoice.download');

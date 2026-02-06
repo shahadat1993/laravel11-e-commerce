@@ -17,18 +17,24 @@ class AuthAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // যদি login করা থাকে
-        if (Auth::check()) {
-            // যদি admin হয়
-            if (Auth::user()->uType === 'ADM') {
-                return $next($request);
-            }
-
-            // login আছে কিন্তু admin না
-            abort(403, 'Unauthorized access');
+        if (!Auth::check()) {
+            return redirect()->route('login');
         }
 
-        // login নেই
-        return redirect()->route('login');
+        $user = Auth::user();
+
+        // 🔹 FUTURE: role/permission system থাকলে
+        if (method_exists($user, 'hasRole')) {
+            if ($user->hasRole('admin') || $user->hasRole('super-admin')) {
+                return $next($request);
+            }
+        }
+
+        // 🔹 CURRENT SYSTEM fallback (so nothing breaks)
+        if ($user->uType === 'ADM') {
+            return $next($request);
+        }
+
+        abort(403, 'Unauthorized access');
     }
 }

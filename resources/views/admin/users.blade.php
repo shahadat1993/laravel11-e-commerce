@@ -1,3 +1,7 @@
+@php
+    use Illuminate\Support\Facades\Auth;
+
+@endphp
 @extends('layouts.admin')
 @push('styles')
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet" />
@@ -60,7 +64,7 @@
                                             {{ $user->name }}
                                         </td>
                                         <td class="text-center">
-                                            <img src="{{ $user->image ? asset('uploads/profile/' . $user->image) : asset('images/no-image.png') }}"
+                                            <img src="{{ $user->image_url }}"
                                                 alt="{{ $user->name }}" class="img-fluid rounded"
                                                 style="width:80px;height:80px;object-fit:cover;">
                                         </td>
