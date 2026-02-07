@@ -13,7 +13,7 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
-    use HasRoles;
+    // use HasRoles;
     /**
      * The attributes that are mass assignable.
      *
@@ -68,13 +68,10 @@ class User extends Authenticatable
     protected static function booted()
     {
         static::deleting(function ($user) {
-            if ($user->isForceDeleting()) {
-                $user->addresses()->forceDelete();
-            } else {
-                $user->addresses()->delete();
-            }
+            $user->addresses()->delete();  // forceDelete না, শুধু delete()
         });
     }
+
 
     // Accessor for image URL
     public function getImageUrlAttribute()

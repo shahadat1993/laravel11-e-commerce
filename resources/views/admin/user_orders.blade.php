@@ -2,168 +2,225 @@
 
 @push('styles')
     <style>
-        /* Table responsive container */
-        .table-container {
-            overflow-x: auto;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            background-color: #ffffff;
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+        .main-wrapper {
+            font-family: 'Outfit', sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+            padding: 40px 20px;
         }
 
-        /* Table styling */
-        .table {
+        /* Header Section */
+        .page-header {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            padding: 40px;
+            border-radius: 24px;
+            margin-bottom: -60px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Table Card Container */
+        .table-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Professional Table Styling */
+        .modern-table {
             width: 100%;
+            border-spacing: 0 12px;
             border-collapse: separate;
-            border-spacing: 0;
-            font-family: 'Inter', sans-serif;
-            font-size: 14px;
         }
 
-        /* Table header */
-        .table thead th {
-            background-color: #1e293b;
-            /* dark blue-gray */
-            color: #ffffff;
+        .modern-table thead th {
+            color: #64748b;
+            text-transform: uppercase;
+            font-size: 13px;
             font-weight: 700;
+            letter-spacing: 1px;
+            padding: 15px 25px;
             text-align: center;
-            padding: 14px 12px;
-            border-bottom: 2px solid #3b82f6;
-            border-radius: 8px 8px 0 0;
         }
 
-        /* Table body */
-        .table tbody td {
+        .modern-table tbody tr {
+            background: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .modern-table tbody tr:hover {
+            transform: translateY(-5px) scale(1.01);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+            background: #f8faff;
+        }
+
+        .modern-table tbody td {
+            padding: 20px 25px;
             text-align: center;
-            padding: 12px 10px;
-            border-bottom: 1px solid #e2e8f0;
-            transition: background-color 0.3s, transform 0.2s;
+            color: #334155;
+            font-size: 15px;
+            border-top: 1px solid #f1f5f9;
+            border-bottom: 1px solid #f1f5f9;
         }
 
-        /* Hover effect */
-        .table tbody tr:hover {
-            background-color: #f1f5f9;
-            transform: translateY(-2px);
+        .modern-table tbody td:first-child { border-left: 1px solid #f1f5f9; border-radius: 16px 0 0 16px; }
+        .modern-table tbody td:last-child { border-right: 1px solid #f1f5f9; border-radius: 0 16px 16px 0; }
+
+        /* Amount & ID Styling */
+        .amount-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0f172a;
         }
 
-        /* Status badges */
+        .order-id-badge {
+            background: #eef2ff;
+            color: #4f46e5;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            border: 1px solid #e0e7ff;
+        }
+
+        /* Updated Status Badges */
         .status-badge {
+            padding: 8px 18px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 11px;
             display: inline-block;
-            padding: 4px 10px;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .bg-ordered { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; } /* Yellow */
+        .bg-delivered { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; } /* Green */
+        .bg-danger-custom { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; } /* Red */
+
+        /* Enhanced Back Button (The "Return to Profiles") */
+        .btn-return {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            color: #ffffff !important;
+            padding: 10px 20px;
             border-radius: 12px;
             font-weight: 600;
-            font-size: 13px;
-            text-transform: capitalize;
-        }
-
-
-
-        /* Back button */
-        .back-btn {
-            background-color: #1e293b;
-            color: #fff;
-            padding: 10px 18px;
-            border-radius: 8px;
-            font-weight: 500;
+            font-size: 14px;
             transition: all 0.3s ease;
             text-decoration: none;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .back-btn:hover {
-            background-color: #3b82f6;
-            color: #ffffff;
+        .btn-return:hover {
+            background: #ffffff;
+            color: #0f172a !important;
+            transform: translateX(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
 
-        /* Responsive for small devices */
-        @media (max-width: 768px) {
-            .table thead {
-                display: none;
+        @media (max-width: 992px) {
+            .modern-table thead { display: none; }
+            .modern-table tbody tr { display: block; margin-bottom: 25px; padding: 15px; }
+            .modern-table tbody td {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 12px 10px;
+                border: none !important;
             }
-
-            .table tbody td {
-                display: block;
-                width: 100%;
-                text-align: right;
-                padding-left: 50%;
-                position: relative;
-                border-bottom: 1px solid #e2e8f0;
-            }
-
-            .table tbody td::before {
+            .modern-table tbody td::before {
                 content: attr(data-label);
-                position: absolute;
-                left: 15px;
-                width: 45%;
-                font-weight: 600;
-                text-align: left;
-            }
-
-            .table tbody tr {
-                margin-bottom: 12px;
-                display: block;
-                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-                border-radius: 8px;
+                font-weight: 700;
+                color: #94a3b8;
+                font-size: 12px;
             }
         }
     </style>
 @endpush
 
 @section('content')
-    <div class="main-content-inner p-6">
+<div class="main-wrapper">
+    <div class="container mx-auto">
+        <div class="page-header flex flex-col md:flex-row justify-between items-center">
+            <div class="text-center md:text-left mb-6 md:mb-0">
+                <h2 class="text-4xl font-extrabold text-white mb-2 tracking-tight">Order Insight</h2>
+                <p class="text-blue-200 text-lg">Transaction records for <span class="text-yellow-400 font-bold underline">{{ $user->name }}</span></p>
+            </div>
 
-        <div class="flex justify-between items-center mb-6">
-            <h3 class="text-2xl font-bold text-gray-800">Orders of {{ $user->name }}</h3>
-            <a href="{{ route('admin.profile.show') }}" class="back-btn">Back to Users</a>
+            <a href="{{ route('admin.profile.show') }}" class="btn-return">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path d="M11 17l-5-5m0 0l5-5m-5 5h12"></path>
+                </svg>
+                Return to Profiles
+            </a>
         </div>
 
-        <div class="table-container rounded shadow overflow-hidden">
-            <table class="table table-striped min-w-full">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Order ID</th>
-                        <th>Total Amount</th>
-                        <th>Status</th>
-                        <th>Created At</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($user->orders as $key => $order)
+        <div class="table-card">
+            <div class="overflow-x-auto">
+                <table class="modern-table">
+                    <thead>
                         <tr>
-                            <td data-label="#"> {{ $key + 1 }} </td>
-                            <td data-label="Order ID"> {{ $order->id }} </td>
-                            <td data-label="Total Amount"> ${{ $order->total }} </td>
-                            <td data-label="Status">
-                                @switch(strtolower($order->status))
-                                    @case('pending')
-                                        <span class="badge bg-warning text-uppercase
- text-dark">{{ $order->status }}</span>
-                                    @break
-
-                                    @case('completed')
-                                        <span class="badge bg-success">{{ $order->status }}</span>
-                                    @break
-
-                                    @case('cancelled')
-                                        <span class="badge bg-danger">{{ $order->status }}</span>
-                                    @break
-
-                                    @default
-                                        <span class="badge bg-secondary">{{ $order->status }}</span>
-                                @endswitch
-                            </td>
-
-
-
-                            <td data-label="Created At"> {{ $order->created_at->format('d M, Y H:i A') }} </td>
+                            <th># Serial</th>
+                            <th>Order ID</th>
+                            <th>Total Investment</th>
+                            <th>Fulfillment Status</th>
+                            <th>Creation Date</th>
                         </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($user->orders as $key => $order)
+                            <tr>
+                                <td data-label="Serial">
+                                    <span class="text-slate-400 font-bold">#{{ str_pad($key + 1, 2, '0', STR_PAD_LEFT) }}</span>
+                                </td>
+                                <td data-label="Order ID">
+                                    <span class="order-id-badge">ORDER-{{ $order->id }}</span>
+                                </td>
+                                <td data-label="Total Investment">
+                                    <span class="amount-text">${{ number_format($order->total, 2) }}</span>
+                                </td>
+                                <td data-label="Fulfillment Status">
+                                    @php
+                                        $status = strtolower($order->status);
+                                        // Logic based on your requirement
+                                        $class = match($status) {
+                                            'ordered' => 'bg-ordered',
+                                            'delivered' => 'bg-delivered',
+                                            default => 'bg-danger-custom',
+                                        };
+                                    @endphp
+                                    <span class="status-badge {{ $class }}">
+                                        {{ strtoupper($order->status) }}
+                                    </span>
+                                </td>
+                                <td data-label="Creation Date">
+                                    <div class="text-sm">
+                                        <p class="font-bold text-slate-700">{{ $order->created_at->format('M d, Y') }}</p>
+                                        <p class="text-slate-400 text-xs">{{ $order->created_at->format('h:i A') }}</p>
+                                    </div>
+                                </td>
+                            </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="text-center text-gray-500 py-6">No orders found for this user.</td>
+                                <td colspan="5" class="py-20 text-center">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/7486/7486744.png" width="80" class="mx-auto opacity-20 mb-4">
+                                    <p class="text-slate-400 text-lg">No order history available.</p>
+                                </td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
-
         </div>
-    @endsection
+    </div>
+</div>
+@endsection

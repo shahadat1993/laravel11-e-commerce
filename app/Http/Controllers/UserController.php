@@ -83,13 +83,22 @@ class UserController extends Controller
     // Users delete method
     public function delete_user($id)
     {
-        User::findOrFail($id)->delete();
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'User not found'
+            ], 404);
+        }
+
+        $user->delete();
 
         return response()->json([
-            'success' => true,
             'message' => 'User deleted successfully!'
         ]);
     }
+
+
 
 
     // User order count method

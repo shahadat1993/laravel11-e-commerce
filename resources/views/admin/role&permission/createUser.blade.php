@@ -243,11 +243,11 @@
                                     <i class="ri-shield-user-fill" style="font-size: 4rem; color: #4f46e5;"></i>
                                 </div>
                                 <label class="form-group-label text-center">Assign Account Role</label>
-                                <select name="roles[]" class="custom-select" required>
+                                <select name="roles[]" class="custom-select" >
                                     <option value="" selected disabled>Select a Role</option>
-                                    @foreach ($roles as $role)
+                                    {{-- @foreach ($roles as $role)
                                         <option value="{{ $role->name }}">{{ ucfirst($role->name) }}</option>
-                                    @endforeach
+                                    @endforeach --}}
                                 </select>
                                 <p class="text-muted small mt-3">The role determines what actions this user can perform in
                                     the system.</p>

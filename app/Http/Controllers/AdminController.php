@@ -129,7 +129,7 @@ class AdminController extends Controller
     // BRANDS METHOD
     public function brands()
     {
-        $brands = Brand::orderBy('id', 'DESC')->paginate(5);
+        $brands = Brand::orderBy('id', 'DESC')->withCount('products')->paginate(5);
         return view('admin.brands', compact('brands'));
     }
 
@@ -603,8 +603,8 @@ class AdminController extends Controller
     // Create User method
     public function create_user()
     {
-        $roles = Role::all();
-        return view('admin.role&permission.createUser',compact('roles'));
+        // $roles = Role::all();
+        return view('admin.role&permission.createUser');
     }
 
     // Store User method
@@ -614,7 +614,7 @@ class AdminController extends Controller
             'email'    => 'required|email|unique:users,email',
             'mobile'   => 'nullable|string|max:20',
             'password' => 'required|string|min:8|confirmed',
-            'roles'    => 'required',
+            // 'roles'    => 'required',
             'image'    => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
@@ -633,7 +633,7 @@ class AdminController extends Controller
 
             $user->save();
 
-            $user->assignRole($request->roles);
+            // $user->assignRole($request->roles);
 
         return redirect()->back()->with('success','User Created Successfully!');
 

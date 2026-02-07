@@ -1,94 +1,238 @@
 @extends('layouts.admin')
+
 @section('content')
     @include('sweetalert2::index')
     @push('styles')
+        <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet" />
         <style>
+            @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&display=swap');
+
+            .main-content-inner {
+                font-family: 'Plus Jakarta Sans', sans-serif;
+                background: #f4f7fa;
+                padding: 60px 20px;
+            }
+
+            .form-container {
+                max-width: 1100px;
+                margin: 0 auto;
+                background: #ffffff;
+                border-radius: 40px;
+                padding: 60px;
+                box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.08);
+                border: 1px solid #e2e8f0;
+            }
+
+            h3 {
+                font-size: 42px !important;
+                font-weight: 800;
+                color: #0f172a;
+                margin-bottom: 15px;
+                letter-spacing: -1px;
+            }
+
+            .header-desc {
+                font-size: 18px;
+                color: #64748b;
+                margin-bottom: 50px;
+            }
+
+            .body-title {
+                font-size: 20px;
+                font-weight: 800;
+                color: #1e293b;
+                margin-bottom: 15px;
+                display: block;
+                padding-left: 5px;
+            }
+
+            .custom-input {
+                width: 100%;
+                padding: 22px 30px;
+                border-radius: 20px;
+                border: 2px solid #e2e8f0;
+                font-size: 19px;
+                font-weight: 600;
+                transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                background: #fbfcfd;
+                color: #0f172a;
+            }
+
+            .custom-input:focus {
+                border-color: #4f46e5;
+                background: #fff;
+                outline: none;
+                box-shadow: 0 0 0 8px rgba(79, 70, 229, 0.08);
+                transform: translateY(-2px);
+            }
+
+            /* মডার্ন আপলোড জোন */
+            .upload-zone {
+                position: relative;
+                width: 100%;
+                min-height: 400px;
+                background: #f8fafc;
+                border: 4px dashed #cbd5e1;
+                border-radius: 30px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                transition: 0.4s;
+                overflow: hidden;
+            }
+
+            .upload-zone:hover {
+                border-color: #4f46e5;
+                background: #f0f3ff;
+            }
+
+            #imgpreview {
+                width: 100%;
+                height: 100%;
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: 10;
+                display: none;
+            }
+
             #imgpreview img {
                 width: 100%;
-                height: 300px;
-                object-fit: cover;
-                border-radius: 8px;
-                border: 2px solid #ddd;
-                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                height: 100%;
+                object-fit: contain;
+                background: #f1f5f9;
+            }
+
+            /* অ্যানিমেটেড ডিলিট আইকন */
+            .delete-overlay {
+                position: absolute;
+                top: 30px;
+                right: 30px;
+                z-index: 25;
+                background: #ef4444;
+                color: white;
+                width: 60px;
+                height: 60px;
+                border-radius: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                box-shadow: 0 15px 30px rgba(239, 68, 68, 0.4);
+                transition: 0.4s;
+            }
+
+            .delete-overlay:hover {
+                transform: scale(1.2) rotate(15deg);
+                background: #dc2626;
+            }
+
+            .btn-submit {
+                background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+                color: #fff !important;
+                width: 100%;
+                padding: 25px;
+                border-radius: 22px;
+                font-size: 24px;
+                font-weight: 800;
+                border: none;
+                cursor: pointer;
+                transition: 0.4s ease;
+                margin-top: 50px;
+                box-shadow: 0 20px 40px rgba(79, 70, 229, 0.3);
+            }
+
+            .btn-submit:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 25px 50px rgba(79, 70, 229, 0.4);
+            }
+
+            .input-group {
+                margin-bottom: 40px;
+            }
+
+            @media (max-width: 768px) {
+                .form-container {
+                    padding: 30px 20px;
+                }
+
+                h3 {
+                    font-size: 30px !important;
+                }
+
+                .custom-input {
+                    padding: 18px;
+                    font-size: 16px;
+                }
+
+                .upload-zone {
+                    min-height: 300px;
+                }
             }
         </style>
     @endpush
-    <div class="main-content-inner">
-        <div class="main-content-wrap">
-            <div class="flex items-center flex-wrap justify-between gap20 mb-27">
-                <h3>Brand infomation</h3>
-                <ul class="breadcrumbs flex items-center flex-wrap justify-start gap10">
-                    <li>
-                        <a href="{{ route('admin.index') }}">
-                            <div class="text-tiny">Dashboard</div>
-                        </a>
-                    </li>
-                    <li>
-                        <i class="icon-chevron-right"></i>
-                    </li>
-                    <li>
-                        <a href="{{ route('admin.brands') }}">
-                            <div class="text-tiny">Brands</div>
-                        </a>
-                    </li>
-                    <li>
-                        <i class="icon-chevron-right"></i>
-                    </li>
-                    <li>
-                        <div class="text-tiny">New Brand</div>
-                    </li>
-                </ul>
-            </div>
-            <!-- new-category -->
-            <div class="wg-box">
-                <form class="form-new-product form-style-1" action="{{ route('admin.store') }}" method="POST"
-                    enctype="multipart/form-data">
-                    @csrf
-                    <fieldset class="name">
-                        <div class="body-title">Brand Name <span class="tf-color-1">*</span></div>
-                        <input class="flex-grow" type="text" placeholder="Brand name" name="brand_name" tabindex="0"
-                            value="{{ old('brand_name') }}" aria-required="true" required="">
-                    </fieldset>
-                    @error('brand_name')
-                        <p class="text-danger">{{ $message }}</p>
-                    @enderror
-                    <fieldset class="name">
-                        <div class="body-title">Brand Slug <span class="tf-color-1">*</span></div>
-                        <input class="flex-grow" type="text" placeholder="Brand Slug" name="brand_slug" tabindex="0"
-                            value="{{ old('brand_slug') }}" aria-required="true" required="">
-                    </fieldset>
-                    @error('brand_slug')
-                        <p class="text-danger">{{ $message }}</p>
-                    @enderror
-                    <fieldset>
-                        <div class="body-title">Upload images <span class="tf-color-1">*</span>
-                        </div>
-                        <div class="upload-image flex-grow">
-                            <div class="item" id="imgpreview" style="display:none">
-                                <img src="upload-1.html" class="effect8" alt="">
-                            </div>
-                            <div id="upload-file" class="item up-load">
-                                <label class="uploadfile" for="myFile">
-                                    <span class="icon">
-                                        <i class="icon-upload-cloud"></i>
-                                    </span>
-                                    <span class="body-text">Drop your images here or select <span class="tf-color">click to
-                                            browse</span></span>
-                                    <input type="file" id="myFile" name="brand_image" accept="image/*">
-                                </label>
-                            </div>
-                        </div>
-                    </fieldset>
-                    @error('brand_image')
-                        <p class="text-danger">{{ $message }}</p>
-                    @enderror
 
-                    <div class="bot">
-                        <div></div>
-                        <button class="tf-button w208" type="submit">Save</button>
-                    </div>
-                </form>
+    <div class="main-content-inner">
+        <div class="form-container">
+            <div class="text-center md:text-left">
+                <h3>Brand Information</h3>
+                <p class="header-desc">Enter the details below to create a new product brand.</p>
             </div>
+
+            <form action="{{ route('admin.store') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+
+                <div class="input-group">
+                    <label class="body-title">Brand Name <span class="text-red-500">*</span></label>
+                    <input type="text" name="brand_name" class="custom-input"
+                        placeholder="Enter brand name (e.g. Apple, Samsung)" value="{{ old('brand_name') }}" required>
+                    @error('brand_name')
+                        <p class="text-red-600 mt-3 font-bold text-lg">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="input-group">
+                    <label class="body-title">Brand Slug (Live Auto-Gen)</label>
+                    <input type="text" name="brand_slug" class="custom-input" placeholder="brand-slug"
+                        value="{{ old('brand_slug') }}" readonly style="background: #f1f5f9; cursor: not-allowed;">
+                    @error('brand_slug')
+                        <p class="text-red-600 mt-3 font-bold text-lg">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="input-group">
+                    <label class="body-title">Upload Brand Logo <span class="text-red-500">*</span></label>
+                    <div class="upload-zone">
+                        <div id="imgpreview">
+                            <div class="delete-overlay" id="remove-img" title="Remove & Reset">
+                                <i class="ri-delete-bin-fill text-3xl"></i>
+                            </div>
+                            <img src="" alt="preview">
+                        </div>
+
+                        <label for="myFile" class="flex flex-col items-center cursor-pointer text-center"
+                            id="upload-label">
+                            <div
+                                class="w-28 h-28 bg-indigo-50 text-indigo-600 rounded-3xl flex items-center justify-center mb-6 transition-all hover:scale-110 hover:rotate-3 shadow-sm">
+                                <i class="ri-upload-cloud-2-line text-5xl"></i>
+                            </div>
+                            <span class="text-1xl font-extrabold text-slate-800" style="font-size: 20px; text-align: center;">Drop your logo here or Browse</span>
+
+
+                            <span class="text-slate-500 mt-3 text-lg" style="font-size: 20px; text-align: center;">Recommended: Square size (JPG, PNG, WEBP)</span>
+                            <input type="file" id="myFile" name="brand_image" accept="image/*" class="hidden">
+                        </label>
+                    </div>
+                    @error('brand_image')
+                        <p class="text-red-600 mt-3 font-bold text-lg">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    <i class="ri-checkbox-circle-fill mr-3"></i> Save Brand Information
+                </button>
+            </form>
         </div>
     </div>
 @endsection
@@ -96,45 +240,43 @@
 @push('scripts')
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // Element select
-            const brandNameInput = document.querySelector('input[name="brand_name"]');
-            const brandSlugInput = document.querySelector('input[name="brand_slug"]');
+            const nameInput = document.querySelector('input[name="brand_name"]');
+            const slugInput = document.querySelector('input[name="brand_slug"]');
+            const fileInput = document.getElementById("myFile");
+            const previewDiv = document.getElementById("imgpreview");
+            const label = document.getElementById("upload-label");
+            const imgTag = previewDiv.querySelector("img");
+            const removeBtn = document.getElementById("remove-img");
 
-
-            brandNameInput.addEventListener("input", function() {
-                const nameValue = brandNameInput.value.trim();
-                const slug = nameValue
-                    .toLowerCase()
+            // ১. অটো স্লাগ লজিক
+            nameInput.addEventListener("input", function() {
+                slugInput.value = nameInput.value.toLowerCase().trim()
                     .replace(/[^a-z0-9\s-]/g, '')
                     .replace(/\s+/g, '-')
                     .replace(/-+/g, '-');
-                brandSlugInput.value = slug;
             });
 
-        });
-    </script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const fileInput = document.getElementById("myFile");
-            const imgPreviewDiv = document.getElementById("imgpreview");
-            const imgTag = imgPreviewDiv.querySelector("img");
-
-            fileInput.addEventListener("change", function(event) {
-                const file = event.target.files[0]; // selected file
-
+            // ২. ইমেজ প্রিভিউ লজিক
+            fileInput.addEventListener("change", function() {
+                const file = this.files[0];
                 if (file) {
                     const reader = new FileReader();
-
-                    reader.onload = function(e) {
-                        imgTag.src = e.target.result; // image show
-                        imgPreviewDiv.style.display = "block"; // show preview box
+                    reader.onload = (e) => {
+                        imgTag.src = e.target.result;
+                        previewDiv.style.display = "block";
+                        label.style.display = "none";
                     }
-
                     reader.readAsDataURL(file);
-                } else {
-                    imgTag.src = "";
-                    imgPreviewDiv.style.display = "none"; // hide if no file
                 }
+            });
+
+            // ৩. অ্যানিমেটেড ডিলিট ও রিসেট লজিক
+            removeBtn.addEventListener("click", (e) => {
+                e.preventDefault();
+                fileInput.value = "";
+                previewDiv.style.display = "none";
+                label.style.display = "flex";
+                imgTag.src = "";
             });
         });
     </script>

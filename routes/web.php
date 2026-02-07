@@ -105,18 +105,12 @@ Route::get('/search', [EcommerceController::class, 'search'])->name('product.sea
 Route::middleware(['auth', 'verified', AuthAdmin::class])->group(function () {
 
     // ১. সাধারণ অ্যাডমিন ড্যাশবোর্ড (সব স্টাফের জন্য)});
-    Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');/** */
+    Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
+    /** */
     Route::get('/admin/dashboard/chart-data', [AdminController::class, 'chartData'])->name('admin.dashboard.chart');
     Route::get('/admin/search', [AdminController::class, 'search'])->name('admin.search');
     Route::get('/admin/profile', [AdminController::class, 'profile'])->name('admin.profile');
     Route::put('/admin/profile/update', [ProfileController::class, 'update'])->name('admin.profile.update');
-
-
-    // ২. শুধুমাত্র 'Admin' রোলের জন্য (User & Contact Management)
-    Route::middleware(['role:Admin'])->group(function () {
-
-    });
-
 });
 
 
@@ -248,7 +242,9 @@ Route::middleware(['auth', 'verified', AuthAdmin::class])->group(function () {
 
 
     // Admin user profile delete route
-    Route::delete('/admin/user/delete/{id}', [UserController::class, 'delete_user'])->name('admin.user.delete');
+    Route::delete('/admin/user/delete/{id}', [UserController::class, 'delete_user'])
+        ->name('admin.user.delete');
+
 
     // User oder count route
     Route::get('/admin/user/{id}/orders', [UserController::class, 'showOrders'])->name('admin.user.orders');
@@ -258,7 +254,7 @@ Route::middleware(['auth', 'verified', AuthAdmin::class])->group(function () {
 Route::middleware(['auth', 'verified', AuthAdmin::class])->group(function () {
     // Create user route
     Route::get('/admin/create-user/', [AdminController::class, 'create_user'])->name('admin.createUser.index');
-    Route::post('/admin/store-user', [AdminController::class, 'create_user'])->name('admin.createUser.store');
+    Route::post('/admin/store-user', [AdminController::class, 'store_user'])->name('admin.createUser.store');
 });
 
 

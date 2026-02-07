@@ -320,7 +320,7 @@
                                 <li class="menu-item">
                                     <a href="{{ route('admin.orders') }}" class="">
                                         <div class="icon"><i class="icon-image"></i></div>
-                                        <div class="text">Slides</div>
+                                        <div class="text">Orders</div>
                                     </a>
                                 </li>
                                 <li class="menu-item">
@@ -405,15 +405,15 @@
                             <div class="header-grid">
 
                                 <div class="popup-wrap message type-header">
-                                    <div class="dropdown">
+                                    {{-- <div class="dropdown">
                                         <button class="btn btn-secondary dropdown-toggle" type="button"
                                             id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
                                             <span class="header-item">
                                                 <span class="text-tiny">1</span>
                                                 <i class="icon-bell"></i>
                                             </span>
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-end has-content"
+                                        </button> --}}
+                                        {{-- <ul class="dropdown-menu dropdown-menu-end has-content"
                                             aria-labelledby="dropdownMenuButton2">
                                             <li>
                                                 <h6>Notifications</h6>
@@ -468,8 +468,8 @@
                                                 </div>
                                             </li>
                                             <li><a href="#" class="tf-button w-full">View all</a></li>
-                                        </ul>
-                                    </div>
+                                        </ul> --}}
+                                    {{-- </div> --}}
                                 </div>
 
 
