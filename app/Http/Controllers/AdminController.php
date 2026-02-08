@@ -17,6 +17,7 @@ use Illuminate\Http\Request;
 use SweetAlert2\Laravel\Swal;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
@@ -599,43 +600,111 @@ class AdminController extends Controller
     }
 
 
+    // Route for showing all users in admin panel
+    public function showUsers()
+    {
+        // শুধু অ্যাডমিন দ্বারা তৈরি ইউজারদের আনা হচ্ছে
+        $users = User::where('is_admin_created', 1)->latest()->get();
+        return view('admin.role&permission.userList', compact('users'));
+    }
 
     // Create User method
     public function create_user()
     {
-        // $roles = Role::all();
-        return view('admin.role&permission.createUser');
+        $roles = Role::all();
+        return view('admin.role&permission.createUser', compact('roles'));
     }
 
     // Store User method
-    public function store_user(Request $request){
+    public function store_user(Request $request)
+    {
         $request->validate([
             'name'     => 'required|string|max:255',
             'email'    => 'required|email|unique:users,email',
             'mobile'   => 'nullable|string|max:20',
             'password' => 'required|string|min:8|confirmed',
-            // 'roles'    => 'required',
+            'roles'    => 'required',
             'image'    => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
-        $user=new User();
-        $user->name=$request->name;
-        $user->email=$request->email;
-        $user->mobile=$request->mobile;
-        $user->password=Hash::make($request->password);
+        $user = new User();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->mobile = $request->mobile;
+        $user->password = Hash::make($request->password);
+        $user->is_admin_created = 1;
+        $user->uType = 'ADM';
 
-        if($request->hasFile('image')){
-            $image=$request->file('image');
-            $imageName=Str::slug($request->name) . '-' . time() . '.'.$image->getClientOriginalName();
-            $image->move(public_path('uploads/users/'),$imageName);
-            $user->image=$imageName;
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = Str::slug($request->name) . '-' . time() . '.' . $image->getClientOriginalName();
+            $image->move(public_path('uploads/profile/'), $imageName);
+            $user->image = $imageName;
         }
 
-            $user->save();
+        $user->save();
 
-            // $user->assignRole($request->roles);
+        $user->assignRole($request->input('roles'));
 
-        return redirect()->back()->with('success','User Created Successfully!');
+        return redirect()->back()->with('success', 'User Created Successfully!');
+    }
 
+    // Edit User Method
+    public function edit_user($id)
+    {
+        $user = User::findOrFail($id);
+        $roles = Role::all();
+        return view('admin.role&permission.editUsers', compact('user', 'roles'));
+    }
+
+
+    // Update User Method
+    public function update_user(Request $request, $id)
+    {
+        $request->validate([
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|email|unique:users,email,' . $id,
+            'mobile'   => 'nullable|string|max:20',
+            'password' => 'nullable|string|min:8|confirmed',
+            'roles'    => 'required',
+            'image'    => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+        ]);
+        $user = User::findOrFail($id);
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->mobile = $request->mobile;
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
+        $user->is_admin_created = 1;
+
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = Str::slug($request->name) . '-' . time() . '.' . $image->getClientOriginalName();
+            $image->move(public_path('uploads/profile/'), $imageName);
+            $user->image = $imageName;
+        }
+
+        $user->save();
+
+        $user->assignRole($request->input('roles'));
+
+        return redirect()->back()->with('success', 'User Updated Successfully!');
+    }
+
+
+    // Destroy User Method
+    public function destroy_user($id){
+        $user = User::findOrFail($id);
+
+    // ইমেজ ফাইল ডিলিট করা
+    $path = public_path('uploads/profile/'.$user->image);
+    if (File::exists($path) && $user->image) {
+        File::delete($path);
+    }
+
+    $user->delete();
+
+    return redirect()->back()->with('success', 'User deleted successfully!');
     }
 }

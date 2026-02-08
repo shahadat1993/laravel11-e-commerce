@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
+use App\Http\Controllers\Controller;
+use Spatie\Permission\Models\Permission;
 
 class RoleController extends Controller
 {
@@ -12,6 +14,8 @@ class RoleController extends Controller
      */
     public function index()
     {
+        $roles=Role::paginate(10);
+        return view('admin.role&permission.roleList',compact('roles'));
     }
 
     /**
@@ -19,7 +23,8 @@ class RoleController extends Controller
      */
     public function create()
     {
-        //
+        $permissions=Permission::all();
+        return view('admin.role&permission.createRole',compact('permissions'));
     }
 
     /**
@@ -27,23 +32,36 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|unique:roles,name',
+            'permissions' => 'required'
+        ]);
+
+        $role = Role::create(['name' => $request->name]);
+        $role->syncPermissions($request->permissions);
+
+        return redirect()->back()->with('success', 'Role created successfully!');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
-    {
-        //
-    }
+    // public function show(string $id)
+    // {
+    //     //
+    // }
 
     /**
      * Show the form for editing the specified resource.
      */
     public function edit(string $id)
     {
-        //
+        $role = Role::findOrFail($id);
+    $permissions = Permission::all();
+    // এই রোলের বর্তমানে কোন কোন পারমিশন আছে তার একটি লিস্ট
+    $rolePermissions = $role->permissions->pluck('name')->toArray();
+
+    return view('admin.role&permission.editRole', compact('role', 'permissions', 'rolePermissions'));
     }
 
     /**
@@ -51,7 +69,19 @@ class RoleController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+       $role = Role::findOrFail($id);
+
+    $request->validate([
+        'name' => 'required|unique:roles,name,' . $id,
+        'permissions' => 'required|array'
+    ]);
+
+    $role->update(['name' => $request->name]);
+
+
+    $role->syncPermissions($request->permissions);
+
+    return redirect()->route('admin.roles')->with('success', 'Role updated successfully!');
     }
 
     /**
@@ -59,6 +89,14 @@ class RoleController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $role = Role::findOrFail($id);
+
+    // কোনো ইউজার এই রোলে থাকলে ডিলিট করতে বাধা দেওয়া (ঐচ্ছিক কিন্তু নিরাপদ)
+    // if($role->users()->count() > 0){
+    //     return back()->with('error', 'Cannot delete role assigned to users!');
+    // }
+
+    $role->delete();
+    return back()->with('success', 'Role deleted successfully!');
     }
 }

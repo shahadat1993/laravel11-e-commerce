@@ -1,11 +1,7 @@
-@php
-    use Illuminate\Support\Facades\Session;
-@endphp
 @extends('layouts.admin')
 
 @section('content')
     <style>
-        /* Professional Form Container */
         .form-container {
             background: #ffffff;
             border-radius: 20px;
@@ -56,19 +52,6 @@
             outline: none;
         }
 
-        /* Validation Error Styles */
-        .is-invalid {
-            border-color: #ef4444 !important;
-            background-color: #fff1f2 !important;
-        }
-        .error-msg {
-            color: #ef4444;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-top: 5px;
-            display: block;
-        }
-
         /* Image Upload & Preview Section */
         .image-preview-container {
             border: 2px dashed #cbd5e1;
@@ -102,6 +85,7 @@
             margin-bottom: 15px;
         }
 
+        /* Delete Button Style */
         .remove-img-btn {
             position: absolute;
             top: 15px;
@@ -122,8 +106,15 @@
             font-size: 20px
         }
 
-        .remove-img-btn:hover { background: #dc2626; transform: scale(1.1); }
-        .upload-placeholder i { font-size: 3.5rem; color: #94a3b8; }
+        .remove-img-btn:hover {
+            background: #dc2626;
+            transform: scale(1.1);
+        }
+
+        .upload-placeholder i {
+            font-size: 3.5rem;
+            color: #94a3b8;
+        }
 
         /* Right side illustration */
         .user-illustration {
@@ -150,7 +141,11 @@
             gap: 10px;
         }
 
-        .icon-box { font-size: 1.5rem; color: #4f46e5; margin-right: 10px; }
+        .icon-box {
+            font-size: 1.5rem;
+            color: #4f46e5;
+            margin-right: 10px;
+        }
 
         /* List of Users Button Styling */
         .btn-list-view {
@@ -171,14 +166,50 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
         }
 
-        .btn-list-view i { font-size: 1.3rem; transition: transform 0.4s ease; }
-        .btn-list-view:hover { border-color: #4f46e5 !important; transform: translateY(-3px); box-shadow: 0 10px 25px rgba(79, 70, 229, 0.1); }
+        .btn-list-view i {
+            font-size: 1.3rem;
+            transition: transform 0.4s ease;
+        }
+
+        /* Hover Effects */
+        .btn-list-view:hover {
+            border-color: #4f46e5 !important;
+            color: #4f46e5 !important;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.1);
+        }
+
+        .btn-list-view:hover i {
+            transform: translateX(-3px) rotate(-10deg);
+        }
+
+        /* Micro-interaction: Shimmer light effect */
         .btn-list-view::after {
-            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
             background: linear-gradient(90deg, transparent, rgba(79, 70, 229, 0.05), transparent);
             transition: 0.6s;
         }
-        .btn-list-view:hover::after { left: 100%; }
+
+        .btn-list-view:hover::after {
+            left: 100%;
+        }
+
+        #image-display {
+            display: {{ $user->image ? 'block' : 'none' }};
+        }
+
+        .upload-placeholder {
+            display: {{ $user->image ? 'none' : 'block' }};
+        }
+
+        #remove-btn {
+            display: {{ $user->image ? 'flex' : 'none' }};
+        }
     </style>
 
     <div class="main-content-inner">
@@ -187,9 +218,13 @@
                 <div>
                     <h3 class="fw-8" style="font-size: 2rem;">User Management</h3>
                     <ul class="breadcrumbs flex items-center flex-wrap justify-start gap10">
-                        <li><a href="{{ route('admin.index') }}"><div class="text-tiny">Dashboard</div></a></li>
+                        <li><a href="{{ route('admin.index') }}">
+                                <div class="text-tiny">Dashboard</div>
+                            </a></li>
                         <li><i class="icon-chevron-right"></i></li>
-                        <li><div class="text-tiny">Create User</div></li>
+                        <li>
+                            <div class="text-tiny">Edit User</div>
+                        </li>
                     </ul>
                 </div>
 
@@ -201,72 +236,76 @@
                 </div>
             </div>
 
-            @if ($errors->any())
-                <div class="alert alert-danger border-0 shadow-sm mb-4 animate__animated animate__shakeX" style="border-radius: 12px; background: #fff1f2; color: #e11d48; padding: 15px 25px;">
-                    <ul class="mb-0 fw-bold">
-                        @foreach ($errors->all() as $error)
-                            <li><i class="ri-error-warning-line me-2"></i>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
             <div class="form-container">
                 <div class="section-title-bar">
-                    <h5 class="form-header-title mb-1">Create New System User</h5>
-                    <p class="text-muted" style="font-size: 1.1rem;">Assign roles, set profile photo, and security details.</p>
+                    <h5 class="form-header-title mb-1">Update User: {{ $user->name }}</h5>
+                    <p class="text-muted" style="font-size: 1.1rem;">Modify profile details, access roles, and security.</p>
                 </div>
 
-                <form action="{{ route('admin.createUser.store') }}" method="POST" enctype="multipart/form-data" class="mt-4">
+                <form action="{{ route('admin.createUser.update', $user->id) }}" method="POST"
+                    enctype="multipart/form-data" class="mt-4">
                     @csrf
+                    @method('PUT')
 
                     <div class="row">
                         <div class="col-lg-8">
                             <div class="row">
                                 <div class="col-md-6 mb-4">
                                     <label class="form-group-label"><i class="ri-user-line icon-box"></i> Full Name</label>
-                                    <input type="text" name="name" class="custom-input @error('name') is-invalid @enderror" placeholder="Ex: Jhon Doe" value="{{ old('name') }}" required>
-                                    @error('name') <span class="error-msg"><i class="ri-error-warning-line"></i> {{ $message }}</span> @enderror
+                                    <input type="text" name="name"
+                                        class="custom-input @error('name') is-invalid @enderror"
+                                        value="{{ old('name', $user->name) }}" required>
                                 </div>
 
                                 <div class="col-md-6 mb-4">
-                                    <label class="form-group-label"><i class="ri-smartphone-line icon-box"></i> Mobile Number</label>
-                                    <input type="text" name="mobile" class="custom-input @error('mobile') is-invalid @enderror" placeholder="01XXXXXXXXX" value="{{ old('mobile') }}" required>
-                                    @error('mobile') <span class="error-msg"><i class="ri-error-warning-line"></i> {{ $message }}</span> @enderror
+                                    <label class="form-group-label"><i class="ri-smartphone-line icon-box"></i> Mobile
+                                        Number</label>
+                                    <input type="text" name="mobile"
+                                        class="custom-input @error('mobile') is-invalid @enderror"
+                                        value="{{ old('mobile', $user->mobile) }}" required>
                                 </div>
 
                                 <div class="col-md-12 mb-4">
-                                    <label class="form-group-label"><i class="ri-mail-line icon-box"></i> Email Address</label>
-                                    <input type="email" name="email" class="custom-input @error('email') is-invalid @enderror" placeholder="john@example.com" value="{{ old('email') }}" required>
-                                    @error('email') <span class="error-msg"><i class="ri-error-warning-line"></i> {{ $message }}</span> @enderror
+                                    <label class="form-group-label"><i class="ri-mail-line icon-box"></i> Email
+                                        Address</label>
+                                    <input type="email" name="email"
+                                        class="custom-input @error('email') is-invalid @enderror"
+                                        value="{{ old('email', $user->email) }}" required>
                                 </div>
 
                                 <div class="col-md-12 mb-4">
-                                    <label class="form-group-label"><i class="ri-image-circle-line icon-box"></i> Profile Photo</label>
-                                    <div class="image-preview-container" id="upload-box" onclick="document.getElementById('imageInput').click();">
-                                        <div class="remove-img-btn" id="remove-btn" title="Remove image" onclick="removeImage(event)">
+                                    <label class="form-group-label"><i class="ri-image-circle-line icon-box"></i> Profile
+                                        Photo</label>
+                                    <div class="image-preview-container" id="upload-box"
+                                        onclick="document.getElementById('imageInput').click();">
+                                        <div class="remove-img-btn" id="remove-btn" title="Remove image"
+                                            onclick="removeImage(event)">
                                             <i class="ri-delete-bin-line"></i>
                                         </div>
                                         <div class="upload-placeholder" id="placeholder-content">
                                             <i class="ri-upload-cloud-2-line"></i>
-                                            <p class="mt-2 mb-0 fw-bold">Click to upload or drag and drop</p>
-                                            <p class="text-muted small">SVG, PNG, JPG or GIF (max. 2MB)</p>
+                                            <p class="mt-2 mb-0 fw-bold">Click to change or drag and drop</p>
                                         </div>
-                                        <img id="image-display" src="#" alt="User Preview">
-                                        <input type="file" name="image" id="imageInput" hidden accept="image/*" onchange="previewImage(this)">
+                                        <img id="image-display"
+                                            src="{{ $user->image ? asset('uploads/profile/' . $user->image) : '#' }}"
+                                            alt="User Preview">
+                                        <input type="file" name="image" id="imageInput" hidden accept="image/*"
+                                            onchange="previewImage(this)">
                                     </div>
-                                    @error('image') <span class="error-msg"><i class="ri-error-warning-line"></i> {{ $message }}</span> @enderror
                                 </div>
 
                                 <div class="col-md-6 mb-4">
-                                    <label class="form-group-label"><i class="ri-lock-2-line icon-box"></i> Password</label>
-                                    <input type="password" name="password" class="custom-input @error('password') is-invalid @enderror" placeholder="••••••••" required>
-                                    @error('password') <span class="error-msg"><i class="ri-error-warning-line"></i> {{ $message }}</span> @enderror
+                                    <label class="form-group-label"><i class="ri-lock-2-line icon-box"></i> New
+                                        Password</label>
+                                    <input type="password" name="password" class="custom-input"
+                                        placeholder="Leave blank to keep current">
                                 </div>
 
                                 <div class="col-md-6 mb-4">
-                                    <label class="form-group-label"><i class="ri-lock-password-line icon-box"></i> Confirm Password</label>
-                                    <input type="password" name="password_confirmation" class="custom-input" placeholder="••••••••" required>
+                                    <label class="form-group-label"><i class="ri-lock-password-line icon-box"></i> Confirm
+                                        New Password</label>
+                                    <input type="password" name="password_confirmation" class="custom-input"
+                                        placeholder="Leave blank to keep current">
                                 </div>
                             </div>
                         </div>
@@ -277,16 +316,14 @@
                                     <i class="ri-shield-user-fill" style="font-size: 4rem; color: #4f46e5;"></i>
                                 </div>
                                 <label class="form-group-label text-center">Assign Account Role</label>
-                                <select name="roles[]" class="custom-select @error('roles') is-invalid @enderror" required>
-                                    <option value="" selected disabled>Select a Role</option>
+                                <select name="roles[]" class="custom-select" required>
                                     @foreach ($roles as $role)
-                                        <option value="{{ $role->name }}" {{ old('roles.0') == $role->name ? 'selected' : '' }}>
+                                        <option value="{{ $role->name }}"
+                                            {{ $user->hasRole($role->name) ? 'selected' : '' }}>
                                             {{ ucfirst($role->name) }}
                                         </option>
                                     @endforeach
                                 </select>
-                                @error('roles') <span class="error-msg"><i class="ri-error-warning-line"></i> {{ $message }}</span> @enderror
-                                <p class="text-muted small mt-3">The role determines what actions this user can perform in the system.</p>
                             </div>
                         </div>
 
@@ -294,10 +331,11 @@
                             <hr style="border-top: 2px dashed #e2e8f0;">
                             <div class="flex gap20 mt-4">
                                 <button type="submit" class="btn-submit">
-                                    <i class="ri-user-add-line"></i> Create User Account
+                                    <i class="ri-save-line"></i> Update User Profile
                                 </button>
-                                <a href="{{ route('admin.users') }}" class="btn-submit" style="background: #f1f5f9 !important; color: #475569 !important;">
-                                    Cancel & Back
+                                <a href="{{ route('admin.users') }}" class="btn-submit"
+                                    style="background: #f1f5f9 !important; color: #475569 !important;">
+                                    Cancel
                                 </a>
                             </div>
                         </div>
@@ -307,27 +345,7 @@
         </div>
     </div>
 
-    @push('scripts')
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        @if(Session::has('success'))
-            Swal.fire({
-                icon: 'success',
-                title: 'Success!',
-                text: "{{ Session::get('success') }}",
-                timer: 3000,
-                showConfirmButton: false
-            });
-        @endif
-
-        @if(Session::has('error'))
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: "{{ Session::get('error') }}",
-            });
-        @endif
-
         function previewImage(input) {
             const file = input.files[0];
             const placeholder = document.getElementById('placeholder-content');
@@ -360,5 +378,4 @@
             removeBtn.style.display = 'none';
         }
     </script>
-    @endpush
 @endsection

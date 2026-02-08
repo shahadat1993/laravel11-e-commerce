@@ -246,108 +246,146 @@
                                 </li>
                             </ul>
                         </div>
+
                         <div class="center-item">
                             <ul class="menu-list">
-                                <li class="menu-item has-children">
-                                    <a href="javascript:void(0);" class="menu-item-button">
-                                        <div class="icon"><i class="icon-shopping-cart"></i></div>
-                                        <div class="text">Products</div>
-                                    </a>
-                                    <ul class="sub-menu">
-                                        <li class="sub-menu-item">
-                                            <a href="{{ route('admin.product.add') }}" class="">
-                                                <div class="text">Add Product</div>
-                                            </a>
-                                        </li>
-                                        <li class="sub-menu-item">
-                                            <a href="{{ route('admin.product.index') }}" class="">
-                                                <div class="text">Products</div>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li class="menu-item has-children">
-                                    <a href="javascript:void(0);" class="menu-item-button">
-                                        <div class="icon"><i class="icon-layers"></i></div>
-                                        <div class="text">Brand</div>
-                                    </a>
-                                    <ul class="sub-menu">
-                                        <li class="sub-menu-item">
-                                            <a href="{{ route('admin.add-brand') }}" class="">
-                                                <div class="text">New Brand</div>
-                                            </a>
-                                        </li>
-                                        <li class="sub-menu-item">
-                                            <a href="{{ route('admin.brands') }}" class="">
-                                                <div class="text">Brands</div>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li class="menu-item has-children">
-                                    <a href="javascript:void(0);" class="menu-item-button">
-                                        <div class="icon"><i class="icon-layers"></i></div>
-                                        <div class="text">Category</div>
-                                    </a>
-                                    <ul class="sub-menu">
-                                        <li class="sub-menu-item">
-                                            <a href="{{ route('admin.category.add') }}" class="">
-                                                <div class="text">New Category</div>
-                                            </a>
-                                        </li>
-                                        <li class="sub-menu-item">
-                                            <a href="{{ route('admin.category.index') }}" class="">
-                                                <div class="text">Categories</div>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
 
-                                <li class="menu-item has-children">
-                                    <a href="javascript:void(0);" class="menu-item-button">
-                                        <div class="icon"><i class="ri-user-received-2-line"></i></div>
-                                        <div class="text">Role & Permission</div>
-                                    </a>
-                                    <ul class="sub-menu">
-                                        <li class="sub-menu-item">
-                                            <a href="{{ route('admin.createUser.index') }}" class="">
-                                                <div class="text">Create Users</div>
-                                            </a>
-                                        </li>
+                                @canany(['product-list', 'product-create'])
+                                    <li class="menu-item has-children">
+                                        <a href="javascript:void(0);" class="menu-item-button">
+                                            <div class="icon"><i class="icon-shopping-cart"></i></div>
+                                            <div class="text">Products</div>
+                                        </a>
+                                        <ul class="sub-menu">
+                                            @can('product-create')
+                                                <li class="sub-menu-item">
+                                                    <a href="{{ route('admin.product.add') }}" class="">
+                                                        <div class="text">Add Product</div>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                            @can('product-list')
+                                                <li class="sub-menu-item">
+                                                    <a href="{{ route('admin.product.index') }}" class="">
+                                                        <div class="text">Products List</div>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                        </ul>
+                                    </li>
+                                @endcanany
 
-                                    </ul>
-                                </li>
-                                <li class="menu-item">
-                                    <a href="{{ route('admin.orders') }}" class="">
-                                        <div class="icon"><i class="icon-image"></i></div>
-                                        <div class="text">Orders</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item">
-                                    <a href="{{ route('admin.slide.index') }}" class="">
-                                        <div class="icon"><i class="icon-image"></i></div>
-                                        <div class="text">Slides</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item">
-                                    <a href="{{ route('admin.coupon') }}" class="">
-                                        <div class="icon"><i class="icon-grid"></i></div>
-                                        <div class="text">Coupons</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item">
-                                    <a href="{{ route('admin.contact.index') }}" class="">
-                                        <div class="icon"><i class="icon-grid"></i></div>
-                                        <div class="text">Messages</div>
-                                    </a>
-                                </li>
+                                @can('brand-manage')
+                                    <li class="menu-item has-children">
+                                        <a href="javascript:void(0);" class="menu-item-button">
+                                            <div class="icon"><i class="icon-layers"></i></div>
+                                            <div class="text">Brand</div>
+                                        </a>
+                                        <ul class="sub-menu">
+                                            <li class="sub-menu-item">
+                                                <a href="{{ route('admin.add-brand') }}" class="">
+                                                    <div class="text">New Brand</div>
+                                                </a>
+                                            </li>
+                                            <li class="sub-menu-item">
+                                                <a href="{{ route('admin.brands') }}" class="">
+                                                    <div class="text">Brands</div>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                @endcan
 
-                                <li class="menu-item">
-                                    <a href="{{ route('admin.profile.show') }}" class="">
-                                        <div class="icon"><i class="icon-user"></i></div>
-                                        <div class="text">User</div>
-                                    </a>
-                                </li>
+                                @can('category-manage')
+                                    <li class="menu-item has-children">
+                                        <a href="javascript:void(0);" class="menu-item-button">
+                                            <div class="icon"><i class="icon-layers"></i></div>
+                                            <div class="text">Category</div>
+                                        </a>
+                                        <ul class="sub-menu">
+                                            <li class="sub-menu-item">
+                                                <a href="{{ route('admin.category.add') }}" class="">
+                                                    <div class="text">New Category</div>
+                                                </a>
+                                            </li>
+                                            <li class="sub-menu-item">
+                                                <a href="{{ route('admin.category.index') }}" class="">
+                                                    <div class="text">Categories</div>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                @endcan
+
+                                @canany(['user-create', 'role-manage'])
+                                    <li class="menu-item has-children">
+                                        <a href="javascript:void(0);" class="menu-item-button">
+                                            <div class="icon"><i class="ri-user-received-2-line"></i></div>
+                                            <div class="text">Role & Permission</div>
+                                        </a>
+                                        <ul class="sub-menu">
+                                            @can('user-create')
+                                                <li class="sub-menu-item">
+                                                    <a href="{{ route('admin.createUser.index') }}" class="">
+                                                        <div class="text">Create Users</div>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                            @can('role-manage')
+                                                <li class="sub-menu-item">
+                                                    <a href="{{ route('admin.createRole') }}" class="">
+                                                        <div class="text">Create Role</div>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                        </ul>
+                                    </li>
+                                @endcanany
+
+                                @can('order-list')
+                                    <li class="menu-item">
+                                        <a href="{{ route('admin.orders') }}" class="">
+                                            <div class="icon"><i class="icon-image"></i></div>
+                                            <div class="text">Orders</div>
+                                        </a>
+                                    </li>
+                                @endcan
+
+                                @can('banner-manage')
+                                    <li class="menu-item">
+                                        <a href="{{ route('admin.slide.index') }}" class="">
+                                            <div class="icon"><i class="icon-image"></i></div>
+                                            <div class="text">Slides</div>
+                                        </a>
+                                    </li>
+                                @endcan
+
+                                @can('coupon-manage')
+                                    <li class="menu-item">
+                                        <a href="{{ route('admin.coupon') }}" class="">
+                                            <div class="icon"><i class="icon-grid"></i></div>
+                                            <div class="text">Coupons</div>
+                                        </a>
+                                    </li>
+                                @endcan
+
+                                @can('customer-view')
+                                    <li class="menu-item">
+                                        <a href="{{ route('admin.contact.index') }}" class="">
+                                            <div class="icon"><i class="icon-grid"></i></div>
+                                            <div class="text">Messages</div>
+                                        </a>
+                                    </li>
+                                @endcan
+
+                                @can('user-list')
+                                    <li class="menu-item">
+                                        <a href="{{ route('admin.profile.show') }}" class="">
+                                            <div class="icon"><i class="icon-user"></i></div>
+                                            <div class="text">User List</div>
+                                        </a>
+                                    </li>
+                                @endcan
 
                                 <li class="menu-item">
                                     <a href="{{ route('admin.profile') }}" class="">
@@ -355,12 +393,13 @@
                                         <div class="text">Settings</div>
                                     </a>
                                 </li>
+
                                 <li class="menu-item">
                                     <form method="post" id="logout-form" action="{{ route('logout') }}">
                                         @csrf
                                         <a href="{{ route('logout') }}" class=""
                                             onclick="event.preventDefault();
-                                    document.getElementById('logout-form').submit();">
+                document.getElementById('logout-form').submit();">
                                             <div class="icon"><i class="fa-solid fa-right-from-bracket"></i></div>
                                             <div class="text">LogOut</div>
                                         </a>
@@ -413,7 +452,7 @@
                                                 <i class="icon-bell"></i>
                                             </span>
                                         </button> --}}
-                                        {{-- <ul class="dropdown-menu dropdown-menu-end has-content"
+                                    {{-- <ul class="dropdown-menu dropdown-menu-end has-content"
                                             aria-labelledby="dropdownMenuButton2">
                                             <li>
                                                 <h6>Notifications</h6>

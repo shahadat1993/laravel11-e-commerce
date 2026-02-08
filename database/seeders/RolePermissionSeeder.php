@@ -40,53 +40,64 @@ class RolePermissionSeeder extends Seeder
             'setting-manage', 'report-view', 'analytics-view'
         ];
 
-        // পারমিশনগুলো ডাটাবেসে তৈরি করা
+        // // পারমিশনগুলো ডাটাবেসে তৈরি করা
+        // foreach ($permissions as $permission) {
+        //     Permission::findOrCreate($permission, 'web');
+        // }
+
+
+
+
         foreach ($permissions as $permission) {
-            Permission::findOrCreate($permission, 'web');
+            Permission::create(['name' => $permission]);
         }
+
+        // ২. একটি ডিফল্ট 'Super Admin' রোল তৈরি করা এবং তাকে সব পারমিশন দেওয়া
+        $adminRole = Role::create(['name' => 'Super Admin']);
+        $adminRole->givePermissionTo(Permission::all());
 
         // --- ২. বিভিন্ন রোল তৈরি এবং পারমিশন অ্যাসাইন ---
 
-        // সুপার অ্যাডমিন (সব ক্ষমতা)
-        $adminRole = Role::findOrCreate('Admin', 'web');
-        $adminRole->syncPermissions(Permission::all());
+        // // সুপার অ্যাডমিন (সব ক্ষমতা)
+        // $adminRole = Role::findOrCreate('Admin', 'web');
+        // $adminRole->syncPermissions(Permission::all());
 
-        // ম্যানেজার (অপারেশনাল কাজ)
-        $managerRole = Role::findOrCreate('Manager', 'web');
-        $managerRole->syncPermissions([
-            'user-list', 'product-list', 'product-create', 'product-edit', 'inventory-manage',
-            'order-list', 'order-view', 'order-edit', 'order-status-update',
-            'category-manage', 'brand-manage', 'customer-list', 'review-manage'
-        ]);
+        // // ম্যানেজার (অপারেশনাল কাজ)
+        // $managerRole = Role::findOrCreate('Manager', 'web');
+        // $managerRole->syncPermissions([
+        //     'user-list', 'product-list', 'product-create', 'product-edit', 'inventory-manage',
+        //     'order-list', 'order-view', 'order-edit', 'order-status-update',
+        //     'category-manage', 'brand-manage', 'customer-list', 'review-manage'
+        // ]);
 
-        // ইনভেন্টরি বা স্টক ম্যানেজার
-        $inventoryManager = Role::findOrCreate('Inventory-Manager', 'web');
-        $inventoryManager->syncPermissions([
-            'product-list', 'inventory-manage', 'stock-update', 'category-manage', 'brand-manage'
-        ]);
+        // // ইনভেন্টরি বা স্টক ম্যানেজার
+        // $inventoryManager = Role::findOrCreate('Inventory-Manager', 'web');
+        // $inventoryManager->syncPermissions([
+        //     'product-list', 'inventory-manage', 'stock-update', 'category-manage', 'brand-manage'
+        // ]);
 
-        // মার্কেটিং ম্যানেজার (অফার এবং ক্যাম্পেইন)
-        $marketingManager = Role::findOrCreate('Marketing-Manager', 'web');
-        $marketingManager->syncPermissions([
-            'coupon-manage', 'banner-manage', 'campaign-manage', 'newsletter-view', 'blog-manage'
-        ]);
+        // // মার্কেটিং ম্যানেজার (অফার এবং ক্যাম্পেইন)
+        // $marketingManager = Role::findOrCreate('Marketing-Manager', 'web');
+        // $marketingManager->syncPermissions([
+        //     'coupon-manage', 'banner-manage', 'campaign-manage', 'newsletter-view', 'blog-manage'
+        // ]);
 
-        // কাস্টমার সাপোর্ট (টিকিট এবং রিভিউ)
-        $supportRole = Role::findOrCreate('Support-Staff', 'web');
-        $supportRole->syncPermissions([
-            'order-list', 'order-view', 'customer-list', 'customer-view', 'review-manage', 'support-ticket-manage'
-        ]);
+        // // কাস্টমার সাপোর্ট (টিকিট এবং রিভিউ)
+        // $supportRole = Role::findOrCreate('Support-Staff', 'web');
+        // $supportRole->syncPermissions([
+        //     'order-list', 'order-view', 'customer-list', 'customer-view', 'review-manage', 'support-ticket-manage'
+        // ]);
 
-        // ডেলিভারি কোঅর্ডিনেটর (অর্ডারের শিপিং দেখাশোনা)
-        $deliveryRole = Role::findOrCreate('Delivery-Coordinator', 'web');
-        $deliveryRole->syncPermissions([
-            'order-list', 'order-view', 'order-status-update'
-        ]);
+        // // ডেলিভারি কোঅর্ডিনেটর (অর্ডারের শিপিং দেখাশোনা)
+        // $deliveryRole = Role::findOrCreate('Delivery-Coordinator', 'web');
+        // $deliveryRole->syncPermissions([
+        //     'order-list', 'order-view', 'order-status-update'
+        // ]);
 
-        // একাউন্ট্যান্ট (টাকা-পয়সা এবং রিপোর্ট)
-        $accountantRole = Role::findOrCreate('Accountant', 'web');
-        $accountantRole->syncPermissions([
-            'order-list', 'payment-view', 'refund-manage', 'report-view', 'analytics-view'
-        ]);
+        // // একাউন্ট্যান্ট (টাকা-পয়সা এবং রিপোর্ট)
+        // $accountantRole = Role::findOrCreate('Accountant', 'web');
+        // $accountantRole->syncPermissions([
+        //     'order-list', 'payment-view', 'refund-manage', 'report-view', 'analytics-view'
+        // ]);
     }
 }

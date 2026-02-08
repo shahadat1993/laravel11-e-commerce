@@ -111,6 +111,111 @@ Route::middleware(['auth', 'verified', AuthAdmin::class])->group(function () {
     Route::get('/admin/search', [AdminController::class, 'search'])->name('admin.search');
     Route::get('/admin/profile', [AdminController::class, 'profile'])->name('admin.profile');
     Route::put('/admin/profile/update', [ProfileController::class, 'update'])->name('admin.profile.update');
+
+    // ২. ইউজার ম্যানেজমেন্ট (শুধুমাত্র যাদের user পারমিশন আছে)
+    Route::middleware(['can:user-list'])->group(function () {
+        // Admnin user show route
+        Route::get('admin/users', [AdminController::class, 'showUsers'])->name('admin.users');
+        // admin profile show route
+        Route::get('/admin/profile/show', [UserController::class, 'users'])->name('admin.profile.show');
+        // User oder count route
+        Route::get('/admin/user/{id}/orders', [UserController::class, 'showOrders'])->name('admin.user.orders');
+    });
+
+    Route::middleware(['can:user-create'])->group(function () {
+        // Create user route
+        Route::get('/admin/create-user/', [AdminController::class, 'create_user'])->name('admin.createUser.index');
+        Route::post('/admin/store-user', [AdminController::class, 'store_user'])->name('admin.createUser.store');
+    });
+
+    Route::middleware(['can:user-edit'])->group(function () {
+        Route::get('/admin/edit-user/{id}', [AdminController::class, 'edit_user'])->name('admin.createUser.edit');
+        Route::put('/admin/update-user/{id}', [AdminController::class, 'update_user'])->name('admin.createUser.update');
+    });
+
+    Route::middleware(['can:user-delete'])->group(function () {
+        Route::delete('/admin/delete-user/{id}', [AdminController::class, 'destroy_user'])->name('admin.createUser.destroy');
+        // Admin user profile delete route
+        Route::delete('/admin/user/delete/{id}', [UserController::class, 'delete_user'])
+            ->name('admin.user.delete');
+    });
+    // ৩. রোল ম্যানেজমেন্ট (শুধুমাত্র Super Admin বা যাদের role-manage পারমিশন আছে)
+    Route::middleware(['can:role-manage'])->group(function () {
+        Route::get('admin/roles', [RoleController::class, 'index'])->name('admin.roles');
+        Route::get('admin/create-role', [RoleController::class, 'create'])->name('admin.createRole');
+        Route::post('admin/store-role', [RoleController::class, 'store'])->name('admin.storeRole');
+        Route::get('admin/edit-role/{id}', [RoleController::class, 'edit'])->name('admin.editRole');
+        Route::put('admin/update-role/{id}', [RoleController::class, 'update'])->name('admin.updateRole');
+        Route::delete('admin/delete-role/{id}', [RoleController::class, 'destroy'])->name('admin.deleteRole');
+    });
+    // ৪. ক্যাটাগরি এবং ব্র্যান্ড (Manage Permission)
+    Route::middleware(['can:category-manage'])->group(function () {
+        Route::get('/admin/category', [CategoryController::class, 'index'])->name('admin.category.index');
+        Route::get('/category/{slug}', [CategoryController::class, 'show'])->name('category.show');
+        Route::get('/admin/category/add', [CategoryController::class, 'add'])->name('admin.category.add');
+        Route::post('/admin/category/store', [CategoryController::class, 'store'])->name('admin.category.store');
+        Route::get('/admin/category/edit{id}', [CategoryController::class, 'edit'])->name('admin.category.edit');
+        Route::put('/admin/category/update', [CategoryController::class, 'update'])->name('admin.category.update');
+        Route::delete('/admin/category/destroy/{id}', [CategoryController::class, 'destroy'])->name('admin.category.destroy');
+    });
+    Route::middleware(['can:brand-manage'])->group(function () {
+        Route::get('/admin/brands', [AdminController::class, 'brands'])->name('admin.brands');
+        Route::get('/admin/brands/add', [AdminController::class, 'addBrand'])->name('admin.add-brand');
+        Route::post('/admin/brands/store', [AdminController::class, 'store_brand'])->name('admin.store');
+        Route::get('/admin/brands/edit/{id}', [AdminController::class, 'edit_brand'])->name('admin.edit-brand');
+        Route::put('/admin/brands/update', [AdminController::class, 'update_brand'])->name('admin.update-brand');
+        Route::delete('/admin/brand/{id}', [AdminController::class, 'destroy_brand'])->name('admin.brand.delete');
+    });
+
+    // ৫. প্রোডাক্ট ম্যানেজমেন্ট
+    Route::middleware(['can:product-list'])->group(function () {
+        Route::get('/admin/product', [ProductController::class, 'index'])->name('admin.product.index');
+        Route::get('/admin/products/search', [AdminController::class, 'searchProduct'])->name('admin.product.search');
+    });
+    Route::middleware(['can:product-create'])->group(function () {
+        Route::get('/admin/product/add', [ProductController::class, 'addProduct'])->name('admin.product.add');
+        Route::post('/admin/product/store', [ProductController::class, 'storeProduct'])->name('admin.product.store');
+    });
+    Route::middleware(['can:product-edit'])->group(function () {
+        Route::get('/admin/product/edit/{id}', [ProductController::class, 'editProduct'])->name('admin.product.edit');
+        Route::put('/admin/product/update/', [ProductController::class, 'updateProduct'])->name('admin.product.update');
+    });
+    Route::middleware(['can:product-delete'])->group(function () {
+        Route::delete('/admin/product/destroy/{id}', [ProductController::class, 'destroyProduct'])->name('admin.product.destroy');
+    });
+
+    // ৬. অর্ডার ম্যানেজমেন্ট
+    Route::middleware(['can:order-list'])->group(function () {
+        Route::get('/admin/orders', [AdminController::class, 'orders'])->name('admin.orders');
+        Route::get('/admin/order/{order_id}/details', [AdminController::class, 'orderDetails'])->name('admin.orders.details');
+    });
+    Route::middleware(['can:order-status-update'])->group(function () {
+        Route::put('/admin/order/update-status', [AdminController::class, 'update_order_status'])->name('admin.orders.status.update');
+
+        // Transaction update route
+        Route::put('/transaction/status', [AdminController::class, 'updateTransactionStatus'])
+            ->name('admin.transaction.status.update');
+    });
+
+
+    // ৭. কুপন এবং স্লাইডার (Marketing/Banner Manage)
+    Route::middleware(['can:coupon-manage'])->group(function () {
+        Route::get('/admin/coupons', [AdminController::class, 'coupons'])->name('admin.coupon');
+        Route::get('/admin/coupons/add', [AdminController::class, 'add_coupon'])->name('admin.coupon.add');
+        Route::post('/admin/coupons/store', [AdminController::class, 'store_coupon'])->name('admin.coupon.store');
+        Route::get('/admin/coupons/edit/{id}', [AdminController::class, 'edit_coupon'])->name('admin.coupon.edit');
+        Route::put('/admin/coupons/update/{id}', [AdminController::class, 'update_coupon'])->name('admin.coupon.update');
+        Route::delete('/admin/coupons/destroy/{id}', [AdminController::class, 'delete_coupon'])->name('admin.coupon.destroy');
+    });
+
+    Route::middleware(['can:banner-manage'])->group(function () {
+        Route::get('/admin/slides', [AdminController::class, 'slides'])->name('admin.slide.index');
+        Route::get('/admin/slide/add', [AdminController::class, 'slide_add'])->name('admin.slide.add');
+        Route::post('/admin/slide/store', [AdminController::class, 'slide_store'])->name('admin.slide.store');
+        Route::get('/admin/slide/edit/{id}', [AdminController::class, 'slide_edit'])->name('admin.slide.edit');
+        Route::put('/admin/slide/update/{id}', [AdminController::class, 'slide_update'])->name('admin.slide.update');
+        Route::delete('/admin/slide/destroy/{id}', [AdminController::class, 'slide_destroy'])->name('admin.slide.delete');
+    });
 });
 
 
@@ -130,82 +235,42 @@ Route::middleware(['auth', 'verified', AuthAdmin::class])->group(function () {
 
 
 
-Route::middleware(['auth', 'verified', AuthAdmin::class])->group(function () {
-    /** */
-    Route::get('/admin/brands', [AdminController::class, 'brands'])->name('admin.brands');
-    Route::get('/admin/brands/add', [AdminController::class, 'addBrand'])->name('admin.add-brand');
-    Route::post('/admin/brands/store', [AdminController::class, 'store_brand'])->name('admin.store');
-    Route::get('/admin/brands/edit/{id}', [AdminController::class, 'edit_brand'])->name('admin.edit-brand');
-    Route::put('/admin/brands/update', [AdminController::class, 'update_brand'])->name('admin.update-brand');
-    Route::delete('/admin/brand/{id}', [AdminController::class, 'destroy_brand'])->name('admin.brand.delete');
-});
+// Route::middleware(['auth', 'verified', AuthAdmin::class])->group(function () {
+//     /** */
+
+// });
 
 
-// CATEGORIES
-Route::middleware(['auth', 'verified', AuthAdmin::class])->group(function () {
-    Route::get('/admin/category', [CategoryController::class, 'index'])->name('admin.category.index');
-    Route::get('/category/{slug}', [CategoryController::class, 'show'])->name('category.show');
-    Route::get('/admin/category/add', [CategoryController::class, 'add'])->name('admin.category.add');
-    Route::post('/admin/category/store', [CategoryController::class, 'store'])->name('admin.category.store');
-    Route::get('/admin/category/edit{id}', [CategoryController::class, 'edit'])->name('admin.category.edit');
-    Route::put('/admin/category/update', [CategoryController::class, 'update'])->name('admin.category.update');
-    Route::delete('/admin/category/destroy/{id}', [CategoryController::class, 'destroy'])->name('admin.category.destroy');
-});
+// // CATEGORIES
+// Route::middleware(['auth', 'verified', AuthAdmin::class])->group(function () {});
 
 
-// Products
-Route::middleware(['auth', 'verified', AuthAdmin::class])->group(function () {
-    Route::get('/admin/product', [ProductController::class, 'index'])->name('admin.product.index');
-    Route::get('/admin/product/add', [ProductController::class, 'addProduct'])->name('admin.product.add');
-    Route::post('/admin/product/store', [ProductController::class, 'storeProduct'])->name('admin.product.store');
-    Route::get('/admin/product/edit/{id}', [ProductController::class, 'editProduct'])->name('admin.product.edit');
-    Route::put('/admin/product/update/', [ProductController::class, 'updateProduct'])->name('admin.product.update');
-    Route::delete('/admin/product/destroy/{id}', [ProductController::class, 'destroyProduct'])->name('admin.product.destroy');
-});
+// // Products
+// Route::middleware(['auth', 'verified', AuthAdmin::class])->group(function () {});
 
 
-// SLIDES
-Route::middleware(['auth', 'verified', AuthAdmin::class])->group(function () {
-    Route::get('/admin/slides', [AdminController::class, 'slides'])->name('admin.slide.index');
-    Route::get('/admin/slide/add', [AdminController::class, 'slide_add'])->name('admin.slide.add');
-    Route::post('/admin/slide/store', [AdminController::class, 'slide_store'])->name('admin.slide.store');
-    Route::get('/admin/slide/edit/{id}', [AdminController::class, 'slide_edit'])->name('admin.slide.edit');
-    Route::put('/admin/slide/update/{id}', [AdminController::class, 'slide_update'])->name('admin.slide.update');
-    Route::delete('/admin/slide/destroy/{id}', [AdminController::class, 'slide_destroy'])->name('admin.slide.delete');
-});
+// // SLIDES
+// Route::middleware(['auth', 'verified', AuthAdmin::class])->group(function () {});
 
 
 
-// COUPONS
-Route::middleware(['auth', 'verified', AuthAdmin::class])->group(function () {
-    Route::get('/admin/coupons', [AdminController::class, 'coupons'])->name('admin.coupon');
-    Route::get('/admin/coupons/add', [AdminController::class, 'add_coupon'])->name('admin.coupon.add');
-    Route::post('/admin/coupons/store', [AdminController::class, 'store_coupon'])->name('admin.coupon.store');
-    Route::get('/admin/coupons/edit/{id}', [AdminController::class, 'edit_coupon'])->name('admin.coupon.edit');
-    Route::put('/admin/coupons/edit/{id}', [AdminController::class, 'update_coupon'])->name('admin.coupon.update');
-    Route::delete('/admin/coupons/destroy/{id}', [AdminController::class, 'delete_coupon'])->name('admin.coupon.destroy');
-});
+// // COUPONS
+// Route::middleware(['auth', 'verified', AuthAdmin::class])->group(function () {});
 
 
-// ORDERS
-Route::middleware(['auth', 'verified', AuthAdmin::class])->group(function () {
-    Route::get('/admin/orders', [AdminController::class, 'orders'])->name('admin.orders');
-    Route::get('/admin/order/{order_id}/details', [AdminController::class, 'orderDetails'])->name('admin.orders.details');
-    Route::put('/admin/order/update-status', [AdminController::class, 'update_order_status'])->name('admin.orders.status.update');
-
-    // Transaction update route
-    Route::put('/transaction/status', [AdminController::class, 'updateTransactionStatus'])
-        ->name('admin.transaction.status.update');
+// // ORDERS
+// Route::middleware(['auth', 'verified', AuthAdmin::class])->group(function () {
 
 
-    // Route for Order tracking
-    Route::get('/admin/order/track-order', [AdminController::class, 'track_order'])->name('admin.order.track');
 
-    // Transaction status update Route
-    // Route::put('/admin/transaction/status', [AdminController::class, 'updateTransactionStatus'])
-    //     ->name('admin.transaction.status.update')
-    //     ->middleware('auth:admin');
-});
+//     // Route for Order tracking
+//     Route::get('/admin/order/track-order', [AdminController::class, 'track_order'])->name('admin.order.track');
+
+//     // Transaction status update Route
+//     // Route::put('/admin/transaction/status', [AdminController::class, 'updateTransactionStatus'])
+//     //     ->name('admin.transaction.status.update')
+//     //     ->middleware('auth:admin');
+// });
 
 // Wishlist Routes
 Route::post('/wishlist/add', [WishListController::class, 'add_to_wishlist'])->name('wishlist.add');
@@ -230,31 +295,30 @@ Route::middleware(['auth', 'verified', AuthAdmin::class])->group(function () {
     // admin search route
     /** */
     // admin product search route
-    Route::get('/admin/products/search', [AdminController::class, 'searchProduct'])->name('admin.product.search');
+
 });
 // BACKEND Profile ROUTE
 Route::middleware(['auth', 'verified', AuthAdmin::class])->group(function () {
     // admin profile route
 
 
-    // admin profile show route
-    Route::get('/admin/profile/show', [UserController::class, 'users'])->name('admin.profile.show');
 
 
-    // Admin user profile delete route
-    Route::delete('/admin/user/delete/{id}', [UserController::class, 'delete_user'])
-        ->name('admin.user.delete');
 
 
-    // User oder count route
-    Route::get('/admin/user/{id}/orders', [UserController::class, 'showOrders'])->name('admin.user.orders');
+
+
+
 });
 
 // Backend Role & Permission Route
 Route::middleware(['auth', 'verified', AuthAdmin::class])->group(function () {
-    // Create user route
-    Route::get('/admin/create-user/', [AdminController::class, 'create_user'])->name('admin.createUser.index');
-    Route::post('/admin/store-user', [AdminController::class, 'store_user'])->name('admin.createUser.store');
+
+
+
+
+    // Create Role route
+
 });
 
 
