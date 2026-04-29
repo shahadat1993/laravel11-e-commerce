@@ -25,11 +25,19 @@ COPY . .
 # ডিপেন্ডেন্সি ইন্সটল
 RUN composer install --no-dev --optimize-autoloader
 
-# পারমিশন ঠিক করা (না করলে এরর খাবি)
-RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
+
 
 # পোর্ট এক্সপোজ করা (রেন্ডার সাধারণত ১০০০০ পোর্ট ব্যবহার করে)
 EXPOSE 10000
 
 # সার্ভার চালু করার কমান্ড
 CMD php artisan serve --host=0.0.0.0 --port=10000
+
+
+# ... আগের কোড ...
+
+# পারমিশন ঠিক করা
+RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
+
+# ডেপ্লয় হওয়ার সময় অটোমেটিক মাইগ্রেশন হবে
+CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=10000
