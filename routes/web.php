@@ -15,6 +15,15 @@ use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\ShopController;
 use App\Http\Controllers\Admin\CategoryController;
 
+
+
+use Illuminate\Support\Facades\Artisan;
+
+Route::get('/migrate-db', function () {
+    Artisan::call('migrate:rollback', ['--force' => true]); // যদি আগে ঝামেলা হয়ে থাকে
+    Artisan::call('migrate', ['--force' => true]);
+    return "Database migrated successfully!";
+});
 // Route::get('/', function () {
 //     return view('welcome');
 // });
