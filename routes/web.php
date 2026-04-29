@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use App\Models\User;
 use App\Http\Middleware\AuthAdmin;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CartController;
@@ -23,6 +24,17 @@ Route::get('/migrate-db', function () {
     Artisan::call('migrate:rollback', ['--force' => true]); // যদি আগে ঝামেলা হয়ে থাকে
     Artisan::call('migrate', ['--force' => true]);
     return "Database migrated successfully!";
+});
+
+
+Route::get('/make-me-admin', function () {
+    $user = User::where('email', 'tor-email@example.com')->first(); // তোর ইমেইল দিবি এখানে
+    if ($user) {
+        $user->utype = 'ADM'; // তোর প্রোজেক্টে যদি 'utype' কলাম থাকে, নাহলে 'role' চেক কর
+        $user->save();
+        return "You are now an Admin!";
+    }
+    return "User not found!";
 });
 // Route::get('/', function () {
 //     return view('welcome');
