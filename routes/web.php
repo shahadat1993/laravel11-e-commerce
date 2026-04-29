@@ -28,13 +28,16 @@ Route::get('/migrate-db', function () {
 
 
 Route::get('/make-me-admin', function () {
-    $user = User::where('email', 'tor-email@example.com')->first(); // তোর ইমেইল দিবি এখানে
+    // ইমেইল চেক করবি যেন তোর রেজিস্টার্ড ইমেইলের সাথে মিলে যায়
+    $user = User::where('email', 's0735949@gmail.com')->first();
+
     if ($user) {
-        $user->utype = 'ADM'; // তোর প্রোজেক্টে যদি 'utype' কলাম থাকে, নাহলে 'role' চেক কর
+        $user->utype = 'ADM'; // লারাভেল ১১ ই-কমার্স প্রজেক্টে সাধারণত 'ADM' থাকে
         $user->save();
-        return "You are now an Admin!";
+        return "অভিনন্দন! আপনি এখন অ্যাডমিন। এবার লগআউট করে আবার লগইন করুন।";
     }
-    return "User not found!";
+
+    return "ইউজার খুঁজে পাওয়া যায়নি! আগে সাইটে গিয়ে এই ইমেইল দিয়ে একটা অ্যাকাউন্ট খুলুন।";
 });
 // Route::get('/', function () {
 //     return view('welcome');
