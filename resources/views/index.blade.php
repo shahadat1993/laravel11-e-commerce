@@ -378,34 +378,39 @@
 
 
                 <div class="row">
+                    @if ($products->count() > 0)
+                        @foreach ($filledProducts as $fProduct)
+                            <div class="col-6 col-md-4 col-lg-3">
+                                <div class="product-card product-card_style3 mb-3 mb-md-4 mb-xxl-5">
+                                    <div class="pc__img-wrapper">
+                                        <a href="route('shop.details', $fProduct->slug)">
+                                            <img loading="lazy" src="{{ asset('uploads/products/' . $fProduct->image) }}"
+                                                width="330" height="400" alt="{{ $fProduct->name }}"
+                                                class="pc__img">
+                                        </a>
+                                    </div>
 
-                    @foreach ($filledProducts as $fProduct)
-                        <div class="col-6 col-md-4 col-lg-3">
-                            <div class="product-card product-card_style3 mb-3 mb-md-4 mb-xxl-5">
-                                <div class="pc__img-wrapper">
-                                    <a href="route('shop.details', $fProduct->slug)">
-                                        <img loading="lazy" src="{{ asset('uploads/products/' . $fProduct->image) }}"
-                                            width="330" height="400" alt="{{ $fProduct->name }}" class="pc__img">
-                                    </a>
-                                </div>
-
-                                <div class="pc__info position-relative">
-                                    <h6 class="pc__title"><a
-                                            href="{{ route('shop.details', $fProduct->slug) }}">{{ $fProduct->name }}</a></h6>
-                                    <div class="product-card__price d-flex align-items-center">
-                                        <span class="money price text-secondary">
-                                            @if ($fProduct->sale_price)
-                                                $<s style="margin-right: 6px">{{ $fProduct->regular_price }}</s>
-                                                ${{ $fProduct->sale_price }}
-                                            @else
-                                                ${{ $fProduct->regular_price }}
-                                            @endif
-                                        </span>
+                                    <div class="pc__info position-relative">
+                                        <h6 class="pc__title"><a
+                                                href="{{ route('shop.details', $fProduct->slug) }}">{{ $fProduct->name }}</a>
+                                        </h6>
+                                        <div class="product-card__price d-flex align-items-center">
+                                            <span class="money price text-secondary">
+                                                @if ($fProduct->sale_price)
+                                                    $<s style="margin-right: 6px">{{ $fProduct->regular_price }}</s>
+                                                    ${{ $fProduct->sale_price }}
+                                                @else
+                                                    ${{ $fProduct->regular_price }}
+                                                @endif
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    @endforeach
+                        @endforeach
+                    @else
+                        <p>No products found!</p>
+                    @endif
                 </div><!-- /.row -->
 
                 <div class="text-center mt-2">
