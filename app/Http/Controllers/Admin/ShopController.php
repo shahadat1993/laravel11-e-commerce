@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Brand;
+use App\Models\Slide;
 use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
@@ -13,12 +14,14 @@ class ShopController extends Controller
     //INDEX METHOD
     public function index(Request $request)
     {
+
         $size = $request->query('size') ?? 12;
         $order = $request->query('order') ?? -1;
         $f_brands = $request->query('brands');
         $f_categories = $request->query('categories');
         $min_price=$request->query('min') ? $request->query('min') : 1;
         $max_price=$request->query('max') ? $request->query('max') : 5000;
+         $slides = Slide::where('status', 1)->limit(3)->get();
 
         $o_column = "created_at";
         $o_order = "DESC";
@@ -66,7 +69,7 @@ class ShopController extends Controller
             ->orderBy($o_column, $o_order)->paginate($size);
         }
 
-        return view('shop', compact('products', 'size', 'order','brands','f_brands','categories','f_categories','min_price','max_price'));
+        return view('shop', compact('products', 'size', 'order','brands','f_brands','categories','slides','f_categories','min_price','max_price'));
     }
 
 

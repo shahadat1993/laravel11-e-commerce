@@ -43,13 +43,7 @@ class RoleController extends Controller
         return redirect()->back()->with('success', 'Role created successfully!');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    // public function show(string $id)
-    // {
-    //     //
-    // }
+   
 
     /**
      * Show the form for editing the specified resource.
@@ -58,7 +52,7 @@ class RoleController extends Controller
     {
         $role = Role::findOrFail($id);
     $permissions = Permission::all();
-    // এই রোলের বর্তমানে কোন কোন পারমিশন আছে তার একটি লিস্ট
+
     $rolePermissions = $role->permissions->pluck('name')->toArray();
 
     return view('admin.role&permission.editRole', compact('role', 'permissions', 'rolePermissions'));
@@ -91,10 +85,7 @@ class RoleController extends Controller
     {
         $role = Role::findOrFail($id);
 
-    // কোনো ইউজার এই রোলে থাকলে ডিলিট করতে বাধা দেওয়া (ঐচ্ছিক কিন্তু নিরাপদ)
-    // if($role->users()->count() > 0){
-    //     return back()->with('error', 'Cannot delete role assigned to users!');
-    // }
+
 
     $role->delete();
     return back()->with('success', 'Role deleted successfully!');

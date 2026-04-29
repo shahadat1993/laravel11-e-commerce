@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Http\Request;
 use App\Http\Middleware\AuthAdmin;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CartController;
@@ -57,9 +58,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/account-update', [UserController::class, 'account_update'])->name('user.account.update');
 });
 // USER ABOUT DETAILS
-Route::middleware('auth')->group(function () {
+// Route::middleware('auth')->group(function () {
     Route::get('/about', [UserController::class, 'about'])->name('user.about');
-});
+// });
 
 
 // USER ADDRESS
@@ -171,6 +172,7 @@ Route::middleware(['auth', 'verified', AuthAdmin::class])->group(function () {
     Route::middleware(['can:product-list'])->group(function () {
         Route::get('/admin/product', [ProductController::class, 'index'])->name('admin.product.index');
         Route::get('/admin/products/search', [AdminController::class, 'searchProduct'])->name('admin.product.search');
+
     });
     Route::middleware(['can:product-create'])->group(function () {
         Route::get('/admin/product/add', [ProductController::class, 'addProduct'])->name('admin.product.add');

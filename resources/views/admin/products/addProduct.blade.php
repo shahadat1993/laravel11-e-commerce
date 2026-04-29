@@ -4,21 +4,190 @@
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet" />
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
-        .main-content-inner { font-family: 'Plus Jakarta Sans', sans-serif; background: #f4f7fe; padding: 30px 20px; }
-        h3 { font-size: 28px !important; font-weight: 800; color: #1e293b; }
-        .text-tiny { font-size: 13px; color: #64748b; font-weight: 500; }
-        .tf-section-2 { display: grid; grid-template-columns: 2fr 1.2fr; gap: 25px; align-items: start; }
-        .wg-box { background: #ffffff; border-radius: 20px; padding: 30px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03); border: 1px solid #eef2f6; margin-bottom: 25px; }
-        .body-title { font-size: 15px; font-weight: 700; color: #334155; margin-bottom: 10px; }
-        input[type="text"], textarea, select { width: 100%; padding: 14px 18px; border-radius: 12px; border: 1.5px solid #e2e8f0; background: #fff; font-size: 15px; font-weight: 500; color: #1e293b; transition: 0.3s ease; }
-        input:focus, textarea:focus, select:focus { border-color: #4f46e5; box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1); outline: none; }
-        .upload-image { border: 2px dashed #cbd5e1; border-radius: 15px; padding: 25px; background: #f8fafc; text-align: center; cursor: pointer; transition: 0.3s; }
-        .preview-item { position: relative; display: inline-block; width: 110px; height: 110px; margin: 10px; border-radius: 12px; }
-        .preview-item img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; border: 2px solid #fff; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08); }
-        .delete-btn-icon { position: absolute; top: -10px; right: -10px; background: #ef4444; color: white; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 2px solid #fff; font-size: 16px; }
-        .btn-submit { background: #4f46e5; color: #fff; padding: 16px; border-radius: 15px; font-weight: 700; font-size: 17px; width: 100%; border: none; cursor: pointer; box-shadow: 0 10px 20px rgba(79, 70, 229, 0.2); }
-        @media (max-width: 1024px) { .tf-section-2 { grid-template-columns: 1fr; } }
-        .text-danger { color: #ef4444; font-size: 13px; margin-top: 5px; font-weight: 600; }
+
+        .main-content-inner {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #f4f7fe;
+            padding: 30px 20px;
+        }
+
+        h3 {
+            font-size: 28px !important;
+            font-weight: 800;
+            color: #1e293b;
+        }
+
+        .text-tiny {
+            font-size: 13px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .tf-section-2 {
+            display: grid;
+            grid-template-columns: 2fr 1.2fr;
+            gap: 25px;
+            align-items: start;
+        }
+
+        .wg-box {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+            border: 1px solid #eef2f6;
+            margin-bottom: 25px;
+        }
+
+        .body-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #334155;
+            margin-bottom: 10px;
+        }
+
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 14px 18px;
+            border-radius: 12px;
+            border: 1.5px solid #e2e8f0;
+            background: #fff;
+            font-size: 15px;
+            font-weight: 500;
+            color: #1e293b;
+            transition: 0.3s ease;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+            outline: none;
+        }
+
+        .upload-image {
+            border: 2px dashed #cbd5e1;
+            border-radius: 15px;
+            padding: 25px;
+            background: #f8fafc;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .preview-item {
+            position: relative;
+            display: inline-block;
+            width: 110px;
+            height: 110px;
+            margin: 10px;
+            border-radius: 12px;
+        }
+
+        .preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 2px solid #fff;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .delete-btn-icon {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: #ef4444;
+            color: white;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 2px solid #fff;
+            font-size: 16px;
+        }
+
+        .btn-submit {
+            background: #4f46e5;
+            color: #fff;
+            padding: 16px;
+            border-radius: 15px;
+            font-weight: 700;
+            font-size: 17px;
+            width: 100%;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(79, 70, 229, 0.2);
+        }
+
+        @media (max-width: 1024px) {
+            .tf-section-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* --- New Alert Box Style --- */
+        .custom-alert {
+            background: #fff1f2;
+            border: 1px solid #fecdd3;
+            border-left: 5px solid #ef4444;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-icon-box {
+            background: #ef4444;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 18px;
+        }
+
+        .alert-content h4 {
+            color: #991b1b;
+            font-size: 16px;
+            font-weight: 700;
+            margin: 0 0 5px 0;
+        }
+
+        .alert-content ul {
+            margin: 0;
+            padding-left: 20px;
+            color: #b91c1c;
+            font-size: 14px;
+            font-weight: 600;
+            list-style-type: disc;
+        }
+
+        /* --------------------------- */
     </style>
 @endpush
 
@@ -29,21 +198,39 @@
             <p class="text-tiny">Create premium products for your store inventory</p>
         </div>
 
-        <form class="tf-section-2 form-add-product" method="POST" enctype="multipart/form-data" action="{{ route('admin.product.store') }}">
+        {{-- ১. এখানে এরর অ্যালার্ট বক্সটি শো হবে --}}
+        @if ($errors->any())
+            <div class="custom-alert">
+                <div class="alert-icon-box">
+                    <i class="ri-error-warning-line"></i>
+                </div>
+                <div class="alert-content">
+                    <h4>Please correct the following errors:</h4>
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+        @endif
+
+        <form class="tf-section-2 form-add-product" method="POST" enctype="multipart/form-data"
+            action="{{ route('admin.product.store') }}">
             @csrf
 
             <div class="left-content">
                 <div class="wg-box">
                     <div class="mb-6">
                         <label class="body-title">Product Name <span class="text-red-500">*</span></label>
-                        <input type="text" id="p_name" name="name" placeholder="Enter product name" value="{{ old('name') }}" oninput="generateSlug(this.value)" required>
-                        @error('name') <p class="text-danger">{{ $message }}</p> @enderror
+                        <input type="text" id="p_name" name="name" placeholder="Enter product name"
+                            value="{{ old('name') }}" oninput="generateSlug(this.value)" required>
                     </div>
 
                     <div class="mb-6">
                         <label class="body-title">Slug <span class="text-red-500">*</span></label>
-                        <input type="text" id="p_slug" name="slug" placeholder="product-slug" value="{{ old('slug') }}" required readonly class="bg-slate-100 cursor-not-allowed">
-                        @error('slug') <p class="text-danger">{{ $message }}</p> @enderror
+                        <input type="text" id="p_slug" name="slug" placeholder="product-slug"
+                            value="{{ old('slug') }}" required readonly class="bg-slate-100 cursor-not-allowed">
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -52,7 +239,9 @@
                             <select name="category_id" required>
                                 <option value="">--Select Category--</option>
                                 @foreach ($categories as $category)
-                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                    <option value="{{ $category->id }}"
+                                        {{ old('category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
@@ -61,7 +250,8 @@
                             <select name="brand_id" required>
                                 <option value="">--Select Brand--</option>
                                 @foreach ($brands as $brand)
-                                    <option value="{{ $brand->id }}">{{ $brand->name }}</option>
+                                    <option value="{{ $brand->id }}"
+                                        {{ old('brand_id') == $brand->id ? 'selected' : '' }}>{{ $brand->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -74,7 +264,7 @@
 
                     <div class="mb-0">
                         <label class="body-title">Full Description <span class="text-red-500">*</span></label>
-                        <textarea name="description" rows="6" placeholder="Write full product details...">{{ old('description') }}</textarea>
+                        <textarea name="description"  rows="6" placeholder="Write full product details...">{{ old('description') }}</textarea>
                     </div>
                 </div>
             </div>
@@ -104,7 +294,8 @@
                     <div class="grid grid-cols-2 gap-4 mb-4">
                         <div>
                             <label class="body-title">Regular Price</label>
-                            <input type="text" name="regular_price" placeholder="0.00" value="{{ old('regular_price') }}">
+                            <input type="text" name="regular_price" placeholder="0.00"
+                                value="{{ old('regular_price') }}">
                         </div>
                         <div>
                             <label class="body-title">Sale Price</label>
@@ -127,15 +318,17 @@
                         <div>
                             <label class="body-title">Stock</label>
                             <select name="stock_status">
-                                <option value="instock">In Stock</option>
-                                <option value="outofstock">Out of Stock</option>
+                                <option value="instock" {{ old('stock_status') == 'instock' ? 'selected' : '' }}>In Stock
+                                </option>
+                                <option value="outofstock" {{ old('stock_status') == 'outofstock' ? 'selected' : '' }}>Out
+                                    of Stock</option>
                             </select>
                         </div>
                         <div>
                             <label class="body-title">Featured</label>
                             <select name="featured">
-                                <option value="0">No</option>
-                                <option value="1">Yes</option>
+                                <option value="0" {{ old('featured') == '0' ? 'selected' : '' }}>No</option>
+                                <option value="1" {{ old('featured') == '1' ? 'selected' : '' }}>Yes</option>
                             </select>
                         </div>
                     </div>
@@ -149,7 +342,7 @@
 
 @push('scripts')
     <script>
-        // ১. অটো স্লাগ জেনারেশন (সহজ এবং শক্তিশালী পদ্ধতি)
+        // ১. অটো স্লাগ জেনারেশন
         function generateSlug(val) {
             let slug = val.toLowerCase()
                 .trim()

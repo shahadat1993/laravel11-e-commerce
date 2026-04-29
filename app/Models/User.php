@@ -87,4 +87,21 @@ class User extends Authenticatable
 
         return asset('uploads/users/' . $this->image);
     }
+
+    // Another accessor for Profile Image Url
+    public function getProfileImageAttribute()
+{
+    if ($this->image) {
+        if (file_exists(public_path('uploads/profile/' . $this->image))) {
+            return asset('uploads/profile/' . $this->image);
+        }
+
+        if (file_exists(public_path('uploads/users/' . $this->image))) {
+            return asset('uploads/users/' . $this->image);
+        }
+    }
+
+    return asset('images/no-image.png');
+}
+
 }

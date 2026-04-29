@@ -241,77 +241,38 @@
             }
           }'>
                     <div class="swiper-wrapper">
-                        <div class="swiper-slide">
-                            <div class="slide-split h-100 d-block d-md-flex overflow-hidden">
-                                <div class="slide-split_text position-relative d-flex align-items-center"
-                                    style="background-color: #f5e6e0;">
-                                    <div class="slideshow-text container p-3 p-xl-5">
-                                        <h2
-                                            class="text-uppercase section-title fw-normal mb-3 animate animate_fade animate_btt animate_delay-2">
-                                            Women's <br /><strong>ACCESSORIES</strong></h2>
-                                        <p class="mb-0 animate animate_fade animate_btt animate_delay-5">Accessories are
-                                            the best way to
-                                            update your look. Add a title edge with new styles and new colors, or go for
-                                            timeless pieces.</h6>
-                                    </div>
-                                </div>
-                                <div class="slide-split_media position-relative">
-                                    <div class="slideshow-bg" style="background-color: #f5e6e0;">
-                                        <img loading="lazy" src="assets/images/shop/shop_banner3.jpg" width="630"
-                                            height="450" alt="Women's accessories"
-                                            class="slideshow-bg__img object-fit-cover" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        @foreach ($slides as $slide)
+                            <div class="swiper-slide">
+                                <div class="slide-split h-100 d-block d-md-flex overflow-hidden">
+                                    <div class="slide-split_text position-relative d-flex align-items-center"
+                                        style="background-color: #f5e6e0;">
+                                        <div class="slideshow-text container p-3 p-xl-5">
+                                            <h2
+                                                class="text-uppercase section-title fw-normal mb-3 animate animate_fade animate_btt animate_delay-2">
+                                                {{ $slide->tagline }}</h2>
+                                            <p class="mb-0 animate animate_fade animate_btt animate_delay-5">
+                                                {{ $slide->title }} <br> {{ $slide->subtitle }} </h6>
 
-                        <div class="swiper-slide">
-                            <div class="slide-split h-100 d-block d-md-flex overflow-hidden">
-                                <div class="slide-split_text position-relative d-flex align-items-center"
-                                    style="background-color: #f5e6e0;">
-                                    <div class="slideshow-text container p-3 p-xl-5">
-                                        <h2
-                                            class="text-uppercase section-title fw-normal mb-3 animate animate_fade animate_btt animate_delay-2">
-                                            Women's <br /><strong>ACCESSORIES</strong></h2>
-                                        <p class="mb-0 animate animate_fade animate_btt animate_delay-5">Accessories are
-                                            the best way to
-                                            update your look. Add a title edge with new styles and new colors, or go for
-                                            timeless pieces.</h6>
-                                    </div>
-                                </div>
-                                <div class="slide-split_media position-relative">
-                                    <div class="slideshow-bg" style="background-color: #f5e6e0;">
-                                        <img loading="lazy" src="assets/images/shop/shop_banner3.jpg" width="630"
-                                            height="450" alt="Women's accessories"
-                                            class="slideshow-bg__img object-fit-cover" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                                                <br><br>
 
-                        <div class="swiper-slide">
-                            <div class="slide-split h-100 d-block d-md-flex overflow-hidden">
-                                <div class="slide-split_text position-relative d-flex align-items-center"
-                                    style="background-color: #f5e6e0;">
-                                    <div class="slideshow-text container p-3 p-xl-5">
-                                        <h2
-                                            class="text-uppercase section-title fw-normal mb-3 animate animate_fade animate_btt animate_delay-2">
-                                            Women's <br /><strong>ACCESSORIES</strong></h2>
-                                        <p class="mb-0 animate animate_fade animate_btt animate_delay-5">Accessories are
-                                            the best way to
-                                            update your look. Add a title edge with new styles and new colors, or go for
-                                            timeless pieces.</h6>
+                                                <a href="{{ $slide->link }}"
+                                                    class="btn btn-lg px-5 py-3 shadow-lg fw-bold text-uppercase border-0"
+                                                    style="background: linear-gradient(45deg, #c5a059, #9e7e43); color: #fff; border-radius: 50px; letter-spacing: 2px; transition: 0.3s; margin-right: 18px;;">
+                                                    Shop Now
+                                                </a>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="slide-split_media position-relative">
-                                    <div class="slideshow-bg" style="background-color: #f5e6e0;">
-                                        <img loading="lazy" src="assets/images/shop/shop_banner3.jpg" width="630"
-                                            height="450" alt="Women's accessories"
-                                            class="slideshow-bg__img object-fit-cover" />
+                                    <div class="slide-split_media position-relative">
+                                        <div class="slideshow-bg" style="background-color: #f5e6e0;">
+                                            <img loading="lazy" src="{{ asset('uploads/slides/' . $slide->image) }}"
+                                                width="630" height="450" alt="Women's accessories"
+                                                class="slideshow-bg__img object-fit-cover" />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        @endforeach
+
                     </div>
 
                     <div class="container p-3 p-xl-5">

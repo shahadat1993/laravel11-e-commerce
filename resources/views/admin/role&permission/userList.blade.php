@@ -269,9 +269,20 @@
                                     <td class="ps-4 py-4">
                                         <div class="d-flex align-items-center">
                                             <div class="user-avatar-wrapper">
+                                                @php
+        $imagePath = null;
+
+        if ($user->image) {
+            if (file_exists(public_path('uploads/profile/' . $user->image))) {
+                $imagePath = asset('uploads/profile/' . $user->image);
+            } elseif (file_exists(public_path('uploads/users/' . $user->image))) {
+                $imagePath = asset('uploads/users/' . $user->image);
+            }
+        }
+    @endphp
                                                 @if ($user->image)
-                                                    <img src="{{ asset('uploads/users/' . $user->image) }}" alt=""
-                                                        class="user-img">
+                                                    <img src="{{ $imagePath ?? asset('images/no-image.png') }}"
+                                                        alt="User Image">
                                                 @else
                                                     <div class="user-initials">{{ strtoupper(substr($user->name, 0, 2)) }}
                                                     </div>

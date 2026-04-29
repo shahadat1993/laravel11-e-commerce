@@ -143,7 +143,7 @@
                     <span>Admin</span> <i class="ri-arrow-right-s-line"></i> <span>Order #{{ $order->id }}</span>
                 </div>
             </div>
-            <a href="{{ route('admin.orders') }}" class="tf-button style-1">
+            <a href="{{ route('admin.orders') }}" class="tf-button button bg-primary style-1">
                 <i class="ri-arrow-left-line"></i> Back to Orders
             </a>
         </div>

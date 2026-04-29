@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Brand;
-use App\Models\Product;
 use App\Models\Category;
-use Illuminate\Support\Str;
+use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
@@ -47,8 +48,8 @@ class ProductController extends Controller
             'featured' => 'required|boolean',
             'category_id' => 'nullable|exists:categories,id',
             'brand_id' => 'nullable|exists:brands,id',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,avif,webp|max:2048',
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,avif,webp|max:6048',
         ]);
 
         $product = new Product();
@@ -133,7 +134,7 @@ class ProductController extends Controller
 
     // Single Image Upload (পুরোনো image unlink সহ)
     if ($request->hasFile('image')) {
-       
+
         if ($product->image && file_exists(public_path('uploads/products/'.$product->image))) {
             unlink(public_path('uploads/products/'.$product->image));
         }
@@ -172,7 +173,7 @@ class ProductController extends Controller
     return redirect()->route('admin.product.index')->with('success', 'Product updated successfully!');
 }
 
-// DELETE PRODUCT METHOD    
+// DELETE PRODUCT METHOD
 public function destroyProduct($id){
     $product = Product::findOrFail($id);
 
@@ -205,5 +206,12 @@ public function destroyProduct($id){
 
 
 
- 
+
+// OpenAI Description Generator
+
+
+
+
+
+
 }

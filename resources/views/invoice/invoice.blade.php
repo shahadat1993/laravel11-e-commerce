@@ -218,7 +218,7 @@
                 </td>
                 <td style="text-align: center;">{{ $item->quantity }}</td>
                 <td style="text-align: right;">৳{{ number_format($item->price, 2) }}</td>
-                <td style="text-align: right; font-weight: bold; color: #1a237e;">৳{{ number_format($item->price * $item->quantity, 2) }}</td>
+                <td style="text-align: right; font-weight: bold; color: #1a237e;">{{ number_format($item->price * $item->quantity, 2) }}</td>
             </tr>
             @endforeach
         </tbody>
