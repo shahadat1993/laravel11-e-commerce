@@ -41,3 +41,9 @@ RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
 # ডেপ্লয় হওয়ার সময় অটোমেটিক মাইগ্রেশন হবে
 CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=10000
+# Node.js ইন্সটল করা (অ্যাসেট বিল্ড করার জন্য লাগবে)
+RUN curl -sL https://deb.nodesource.com/setup_18.x | bash - && apt-get install -y nodejs
+
+# npm ইন্সটল এবং বিল্ড
+RUN npm install
+RUN npm run build
