@@ -366,12 +366,14 @@
                     $products = $fProducts->values();
                     $count = $products->count();
 
-                    if ($count >= $perRow) {
-                        $filledProducts = $products->take($perRow);
-                    } else {
-                        $filledProducts = collect();
-                        for ($i = 0; $i < $perRow; $i++) {
-                            $filledProducts->push($products[$i % $count]);
+                    if ($count > 0) {
+                        if ($count >= $perRow) {
+                            $filledProducts = $products->take($perRow);
+                        } else {
+                            for ($i = 0; $i < $perRow; $i++) {
+                                // এখানে ভাগ করার আগে নিশ্চিত হওয়া গেছে যে $count ০ নয়
+                                $filledProducts->push($products[$i % $count]);
+                            }
                         }
                     }
                 @endphp
