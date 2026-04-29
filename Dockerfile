@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y \
     libpq-dev
 
 # পিএইচপি এক্সটেনশন ইন্সটল (লারাভেলের জন্য মাস্ট)
-RUN docker-php-ext-install pdo_mysql pdo_pqsql mbstring exif pcntl bcmath gd
+RUN docker-php-ext-install pdo_mysql pdo_pgsql mbstring exif pcntl bcmath gd
 
 # কম্পোজার কপি করা
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
